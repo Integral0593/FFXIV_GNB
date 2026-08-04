@@ -1,0 +1,22 @@
+# Godot / dotnet build artifacts
+**/.godot/
+**/bin/
+**/obj/
+**/publish/
+**/android/
+**/packages/
+
+# Per-developer local paths (Steam/Godot install locations)
+**/Directory.Build.props
+**/*.user
+
+# IDEs
+.idea/
+.vs/
+*.editorconfig
+
+# Excel lock files
+~$*.xlsx
+
+# Claude Code session state
+.claude/settings.local.json
