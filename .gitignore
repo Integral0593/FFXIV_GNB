@@ -19,4 +19,4 @@
 ~$*.xlsx
 
 # Claude Code session state
-.claude/settings.local.json
+.claude/

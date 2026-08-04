@@ -8,10 +8,12 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace GunbreakerMod.GunbreakerModCode.Cards;
 
-// Placeholder test card: 1-cost attack dealing 6 damage, mirrors the vanilla Strike cards.
+// 打击 Strike - starter attack, 3 copies in the starting deck.
 [RegisterCard(typeof(GunbreakerCardPool))]
-public sealed class GunbreakerStrike() : ModCardTemplate(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
+public sealed class Strike_GNB() : ModCardTemplate(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy)
 {
+    protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];
+
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(6m, ValueProp.Move)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -21,5 +23,10 @@ public sealed class GunbreakerStrike() : ModCardTemplate(1, CardType.Attack, Car
             .FromCard(this, cardPlay)
             .Targeting(cardPlay.Target)
             .Execute(choiceContext);
+    }
+
+    protected override void OnUpgrade()
+    {
+        DynamicVars.Damage.UpgradeValueBy(3m);
     }
 }

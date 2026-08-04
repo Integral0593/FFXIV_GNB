@@ -1,0 +1,6 @@
+{
+  "GUNBREAKER_MOD_CARD_STRIKE_GNB.title": "打击",
+  "GUNBREAKER_MOD_CARD_STRIKE_GNB.description": "造成{Damage}点伤害。",
+  "GUNBREAKER_MOD_CARD_DEFEND_GNB.title": "防御",
+  "GUNBREAKER_MOD_CARD_DEFEND_GNB.description": "获得{Block}点格挡。"
+}

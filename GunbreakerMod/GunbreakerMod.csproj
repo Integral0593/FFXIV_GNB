@@ -14,7 +14,10 @@
     <PropertyGroup>
         <!-- Diasble architecture mismatch warning; mods are ideally built for all platforms (MSIL)
              while your local StS2 version will be for your specific platform. -->
-        <NoWarn>$(NoWarn);MSB3270</NoWarn>
+        <!-- STS001 checks localization keys against BaseLib's plain-CLR-name id scheme, which doesn't know about
+             RitsuLib's [RegisterCard] stem-based ids (MODID_CATEGORY_TYPENAME). Suppressed to avoid duplicate
+             throwaway localization keys on every card; real coverage is verified in-game via the dev console. -->
+        <NoWarn>$(NoWarn);MSB3270;STS001</NoWarn>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -41,7 +44,7 @@
         <PackageReference Include="Krafs.Publicizer" Version="2.3.0" PrivateAssets="All" />
         <PackageReference Include="Alchyr.Sts2.ModAnalyzers" Version="*" />
         <!-- Generates a .pck file when building if only using simple assets. May not work on all setups. Uncomment to test. -->
-        <!-- <PackageReference Include="BSchneppe.StS2.PckPacker" Version="0.1.1" PrivateAssets="All" /> -->
+        <PackageReference Include="BSchneppe.StS2.PckPacker" Version="0.1.1" PrivateAssets="All" />
         <AdditionalFiles Include="GunbreakerMod/localization/**/*.json" /> <!-- Used by analyzer -->
         <PackageReference Include="STS2.RitsuLib" Version="0.5.10" PrivateAssets="All" />
     </ItemGroup>
