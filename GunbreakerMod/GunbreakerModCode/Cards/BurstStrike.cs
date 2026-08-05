@@ -1,4 +1,5 @@
 using GunbreakerMod.GunbreakerModCode.Characters;
+using GunbreakerMod.GunbreakerModCode.Powers;
 using GunbreakerMod.GunbreakerModCode.Resources;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -12,11 +13,13 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace GunbreakerMod.GunbreakerModCode.Cards;
 
 // 爆发打击 Burst Strike - 0-cost Cartridge spender, starter card.
-// TODO: design also calls for "if your Cartridge is at the cap, generate a Burst Strike in
-// hand" as a passive trigger whenever Cartridge reaches 3 by ANY means, not just from playing
-// this card. That needs an ISecondaryResourceHookListener watching every Cartridge gain across
-// the whole mod, which is a bigger separate piece of infrastructure - deferred for now, only
-// the base damage + Cartridge cost is implemented here.
+// Two independent on-play generation effects, both confirmed against the design table:
+// 1. Its own innate effect: if Cartridge was at the cap right before this card paid its 1-Cartridge
+//    cost, generate another Burst Strike into hand. Secondary costs are paid before OnPlay runs
+//    (confirmed by decompiling CardModel.OnPlayWrapper - it receives the already-resolved
+//    ResourceInfo), so by the time OnPlay executes the 1 Cartridge is already spent; "was at cap"
+//    is reconstructed as currentAmount + 1 >= maxAmount.
+// 2. Continuation's effect: if the player has ContinuationPower, generate a Hypervelocity into hand.
 [RegisterCard(typeof(GunbreakerCardPool))]
 [RegisterCharacterStarterCard(typeof(Gunbreaker), 1)]
 public sealed class BurstStrike() : ModCardTemplate(0, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy)
@@ -41,6 +44,28 @@ public sealed class BurstStrike() : ModCardTemplate(0, CardType.Attack, CardRari
             .FromCard(this, cardPlay)
             .Targeting(cardPlay.Target)
             .Execute(choiceContext);
+
+        var maxCartridge = SecondaryResourceStateStore.GetMaxAmount(Owner, CartridgeResource.Id) ?? 0;
+        var currentCartridge = SecondaryResourceStateStore.GetAmount(Owner, CartridgeResource.Id);
+        if (currentCartridge + 1 >= maxCartridge)
+        {
+            var extraBurstStrike = CombatState.CreateCard<BurstStrike>(Owner);
+            if (IsUpgraded)
+            {
+                CardCmd.Upgrade(extraBurstStrike);
+            }
+            await CardPileCmd.AddGeneratedCardToCombat(extraBurstStrike, PileType.Hand, Owner);
+        }
+
+        if (Owner.Creature.HasPower<ContinuationPower>())
+        {
+            var hypervelocity = CombatState.CreateCard<Hypervelocity>(Owner);
+            if (IsUpgraded)
+            {
+                CardCmd.Upgrade(hypervelocity);
+            }
+            await CardPileCmd.AddGeneratedCardToCombat(hypervelocity, PileType.Hand, Owner);
+        }
     }
 
     protected override void OnUpgrade()

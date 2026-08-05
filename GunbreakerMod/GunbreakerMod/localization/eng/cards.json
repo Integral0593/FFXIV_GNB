@@ -14,7 +14,12 @@
   "GUNBREAKER_MOD_CARD_NO_MERCY.title": "No Mercy",
   "GUNBREAKER_MOD_CARD_NO_MERCY.description": "Gain {Strength:diff()} Strength for {Duration} turns.",
   "GUNBREAKER_MOD_CARD_BURST_STRIKE.title": "Burst Strike",
-  "GUNBREAKER_MOD_CARD_BURST_STRIKE.description": "Costs 1 Cartridge. Deal {Damage:diff()} damage.",
+  "GUNBREAKER_MOD_CARD_BURST_STRIKE.description": "Costs 1 Cartridge. Deal {Damage:diff()} damage. If your Cartridge is at max, generate a Burst Strike in your hand.",
+
+  "GUNBREAKER_MOD_CARD_CONTINUATION.title": "Continuation",
+  "GUNBREAKER_MOD_CARD_CONTINUATION.description": "Whenever you spend Cartridge, generate its matching follow-up card in your hand.",
+  "GUNBREAKER_MOD_CARD_HYPERVELOCITY.title": "Hypervelocity",
+  "GUNBREAKER_MOD_CARD_HYPERVELOCITY.description": "Deal {Damage:diff()} damage.",
 
   "GUNBREAKER_MOD_CARD_DEMON_SLICE.title": "Demon Slice",
   "GUNBREAKER_MOD_CARD_DEMON_SLICE.description": "Deal {Damage:diff()} damage to ALL enemies. Generate a Demon Slaughter in your hand.",
@@ -26,5 +31,14 @@
   "GUNBREAKER_MOD_CARD_LIGHTNING_SHOT.title": "Lightning Shot",
   "GUNBREAKER_MOD_CARD_LIGHTNING_SHOT.description": "Deal {Damage:diff()} damage. Draw {Draw:diff()} card.",
   "GUNBREAKER_MOD_CARD_ROUGH_DIVIDE.title": "Rough Divide",
-  "GUNBREAKER_MOD_CARD_ROUGH_DIVIDE.description": "Deal {Damage:diff()} damage. Draw {Draw:diff()} card."
+  "GUNBREAKER_MOD_CARD_ROUGH_DIVIDE.description": "Deal {Damage:diff()} damage. Draw {Draw:diff()} card.",
+
+  "GUNBREAKER_MOD_CARD_HEART_OF_STONE.title": "Heart of Stone",
+  "GUNBREAKER_MOD_CARD_HEART_OF_STONE.description": "Gain {Block:diff()} Block. All enemies lose {Strength:diff()} Strength this turn.",
+  "GUNBREAKER_MOD_CARD_AURORA.title": "Aurora",
+  "GUNBREAKER_MOD_CARD_AURORA.description": "Costs 1 Cartridge. Gain {RegenPower:diff()} Regeneration.",
+  "GUNBREAKER_MOD_CARD_SONIC_BREAK.title": "Sonic Break",
+  "GUNBREAKER_MOD_CARD_SONIC_BREAK.description": "Deal {Damage:diff()} damage. Apply {VulnerablePower:diff()} Vulnerable.",
+  "GUNBREAKER_MOD_CARD_BOW_SHOCK.title": "Bow Shock",
+  "GUNBREAKER_MOD_CARD_BOW_SHOCK.description": "Apply {VulnerablePower:diff()} Vulnerable to ALL enemies."
 }

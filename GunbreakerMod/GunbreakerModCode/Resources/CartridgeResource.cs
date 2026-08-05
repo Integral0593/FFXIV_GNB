@@ -27,9 +27,9 @@ public static class CartridgeResource
 {
     private const string LocalId = "cartridge";
     private const int Slots = 3;
-    private const float PipSize = 32f;
-    private const float PipGap = 6f;
-    private const float GapAboveEnergyOrb = 12f;
+    private const float PipSize = 44f;
+    private const float PipGap = 8f;
+    private const float GapAboveEnergyOrb = 14f;
 
     private static readonly Color LitColor = new(0.25f, 0.85f, 1f);
     private static readonly Color UnlitColor = new(0.28f, 0.28f, 0.32f);
@@ -106,7 +106,10 @@ public static class CartridgeResource
         var energyContainer = ctx.Parent.GetNodeOrNull<Control>("%EnergyCounterContainer");
         if (energyContainer != null)
         {
-            row.GlobalPosition = energyContainer.GlobalPosition + new Vector2(0, -(PipSize + GapAboveEnergyOrb));
+            const float rowWidth = Slots * PipSize + (Slots - 1) * PipGap;
+            var targetX = energyContainer.GlobalPosition.X + (energyContainer.Size.X / 2f) - (rowWidth / 2f);
+            var targetY = energyContainer.GlobalPosition.Y - (PipSize + GapAboveEnergyOrb);
+            row.GlobalPosition = new Vector2(targetX, targetY);
         }
     }
 }

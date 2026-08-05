@@ -1,4 +1,8 @@
 {
   "GUNBREAKER_MOD_POWER_NO_MERCY_POWER.title": "No Mercy",
-  "GUNBREAKER_MOD_POWER_NO_MERCY_POWER.description": "Strength that will be lost after a limited number of turns."
+  "GUNBREAKER_MOD_POWER_NO_MERCY_POWER.description": "Strength that will be lost after a limited number of turns.",
+  "GUNBREAKER_MOD_POWER_CONTINUATION_POWER.title": "Continuation",
+  "GUNBREAKER_MOD_POWER_CONTINUATION_POWER.description": "Whenever Cartridge is spent, generates its matching follow-up card in hand.",
+  "GUNBREAKER_MOD_POWER_HEART_OF_STONE_STRENGTH_DOWN_POWER.title": "Heart of Stone",
+  "GUNBREAKER_MOD_POWER_HEART_OF_STONE_STRENGTH_DOWN_POWER.description": "Strength that will be restored at the end of this turn."
 }
