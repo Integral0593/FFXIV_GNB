@@ -7,19 +7,35 @@ using STS2RitsuLib.Scaffolding.Characters;
 namespace GunbreakerMod.GunbreakerModCode.Characters;
 
 // Framework-only pass. Character-select identity (icon/locked-icon/top-panel icon/select
-// background/map marker) uses our own mod-owned placeholder assets, NOT Ironclad's - reusing
-// Ironclad's literal res:// paths there made this character visually indistinguishable from
-// the real Ironclad in the character-select screen (confirmed via game logs: the actual run
-// that started was CHARACTER.IRONCLAD, not ours - the user was clicking the vanilla character
-// by mistake because the icons were identical).
+// background/map marker) AND the in-combat body use our own mod-owned placeholder assets,
+// not Ironclad's. Confirmed by decompiling RitsuLib's runtime factory patches: setting
+// Scenes.VisualsPath to a plain PNG is safe (CharacterCreatureVisualsRuntimeFactoryPatch
+// auto-wraps a Texture2D into a valid NCreatureVisuals via RitsuGodotNodeFactories -
+// same for the Ui paths above, which all accept a PackedScene OR a Texture2D).
 //
-// Everything NOT overridden below (in-combat Spine body, energy counter scene, merchant/rest-site
-// anim, trail vfx, sfx) still falls back to Ironclad via PlaceholderCharacterId. That's lower risk
-// to leave aliased for now since it doesn't affect character *selection*, only in-combat rendering,
-// and building a safe custom NCreatureVisuals node tree without a real Godot scene is nontrivial.
-// Epoch/Timeline (Ancients) content is opted out of below, since none is designed yet. Starting
-// deck comes from [RegisterCharacterStarterCard] on the cards themselves (Strike_GNB x3,
-// Defend_GNB x4); no starting relic yet.
+// EnergyCounterPath / MerchantAnimPath / RestSiteAnimPath / Spine / trail vfx / sfx are
+// deliberately left unset (falling back to Ironclad via PlaceholderCharacterId): their
+// runtime factory patches (e.g. CharacterEnergyCounterRuntimeFactoryPatch) only accept a
+// real PackedScene - pointing them at a placeholder PNG would fail ResolveScene() and fall
+// through to the game's own direct-instantiate path, which is what crashed for Squall's
+// broken character-select scene earlier. Revisit once we either have real art or invest in
+// building actual placeholder .tscn scenes for these.
+//
+// RequiresEpochAndTimeline is intentionally left at its default (true) - NOT overridden to
+// false. That was the actual root cause of the "always ends up as Ironclad" bug: the game
+// log showed SelectCharacter_Patch4 throwing ArgumentOutOfRangeException the moment this
+// character was clicked (right around the Ascension-epoch check), which silently aborted
+// the selection and left the game on whatever character was selected before. The RitsuLib
+// docs are explicit that RequiresEpochAndTimeline=false is only for characters that do NOT
+// go through the normal character-select UI - it is not "opt out of Ancient dialogue", it's
+// "opt out of the whole ascension/timeline integration every normally selectable character
+// needs". No custom ModEpochTemplate/story content is required for this to work - the base
+// game's own epoch/ascension system handles a plain playable character generically, the
+// same way it does for vanilla Ironclad.
+//
+// Starting deck comes from [RegisterCharacterStarterCard] on the cards themselves
+// (Strike_GNB x3, Defend_GNB x4); starting relic from [RegisterCharacterStarterRelic] on
+// GunbreakerStarterRelic.
 [RegisterCharacter]
 public sealed class Gunbreaker : ModCharacterTemplate<GunbreakerCardPool, GunbreakerRelicPool, GunbreakerPotionPool>
 {
@@ -34,9 +50,11 @@ public sealed class Gunbreaker : ModCharacterTemplate<GunbreakerCardPool, Gunbre
             IconOutlineTexturePath = "res://GunbreakerMod/images/icon_outline.png",
             MapMarkerPath = "res://GunbreakerMod/images/map_marker.png",
         },
+        Scenes = new()
+        {
+            VisualsPath = "res://GunbreakerMod/images/creature_placeholder.png",
+        },
     };
-
-    public override bool RequiresEpochAndTimeline => false;
 
     public override CharacterGender Gender => CharacterGender.Neutral;
 
