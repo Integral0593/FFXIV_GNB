@@ -1,25 +1,30 @@
 {
   "GUNBREAKER_MOD_CARD_STRIKE_GNB.title": "打击",
-  "GUNBREAKER_MOD_CARD_STRIKE_GNB.description": "造成{Damage:diff}点伤害。",
+  "GUNBREAKER_MOD_CARD_STRIKE_GNB.description": "造成{Damage:diff()}点伤害。",
   "GUNBREAKER_MOD_CARD_DEFEND_GNB.title": "防御",
-  "GUNBREAKER_MOD_CARD_DEFEND_GNB.description": "获得{Block:diff}点格挡。",
+  "GUNBREAKER_MOD_CARD_DEFEND_GNB.description": "获得{Block:diff()}点格挡。",
 
   "GUNBREAKER_MOD_CARD_KEEN_EDGE.title": "利刃斩",
-  "GUNBREAKER_MOD_CARD_KEEN_EDGE.description": "造成{Damage:diff}点伤害，在手牌中生成一张【残暴弹】。",
+  "GUNBREAKER_MOD_CARD_KEEN_EDGE.description": "造成{Damage:diff()}点伤害，在手牌中生成一张【残暴弹】。",
   "GUNBREAKER_MOD_CARD_BRUTAL_SHELL.title": "残暴弹",
-  "GUNBREAKER_MOD_CARD_BRUTAL_SHELL.description": "造成{Damage:diff}点伤害，获得{Block:diff}点格挡，在手牌中生成一张【迅连斩】。",
+  "GUNBREAKER_MOD_CARD_BRUTAL_SHELL.description": "造成{Damage:diff()}点伤害，获得{Block:diff()}点格挡，在手牌中生成一张【迅连斩】。",
   "GUNBREAKER_MOD_CARD_SOLID_BARREL.title": "迅连斩",
-  "GUNBREAKER_MOD_CARD_SOLID_BARREL.description": "造成{Damage:diff}点伤害，获得{EnergyGain:diff}点能量，获得1档晶壤。",
+  "GUNBREAKER_MOD_CARD_SOLID_BARREL.description": "造成{Damage:diff()}点伤害，获得{EnergyGain:diff()}点能量，获得1档晶壤。",
 
   "GUNBREAKER_MOD_CARD_NO_MERCY.title": "无情",
-  "GUNBREAKER_MOD_CARD_NO_MERCY.description": "获得{Strength:diff}点力量，持续{Duration}回合。",
+  "GUNBREAKER_MOD_CARD_NO_MERCY.description": "获得{Strength:diff()}点力量，持续{Duration}回合。",
   "GUNBREAKER_MOD_CARD_BURST_STRIKE.title": "爆发打击",
-  "GUNBREAKER_MOD_CARD_BURST_STRIKE.description": "消耗1档晶壤。造成{Damage:diff}点伤害。",
+  "GUNBREAKER_MOD_CARD_BURST_STRIKE.description": "消耗1档晶壤。造成{Damage:diff()}点伤害。",
 
   "GUNBREAKER_MOD_CARD_DEMON_SLICE.title": "恶魔切",
-  "GUNBREAKER_MOD_CARD_DEMON_SLICE.description": "对所有敌人造成{Damage:diff}点伤害，在手牌中生成一张【恶魔杀】。",
+  "GUNBREAKER_MOD_CARD_DEMON_SLICE.description": "对所有敌人造成{Damage:diff()}点伤害，在手牌中生成一张【恶魔杀】。",
   "GUNBREAKER_MOD_CARD_DEMON_SLAUGHTER.title": "恶魔杀",
-  "GUNBREAKER_MOD_CARD_DEMON_SLAUGHTER.description": "对所有敌人造成{Damage:diff}点伤害，获得1档晶壤。",
+  "GUNBREAKER_MOD_CARD_DEMON_SLAUGHTER.description": "对所有敌人造成{Damage:diff()}点伤害，获得1档晶壤。",
   "GUNBREAKER_MOD_CARD_BLOODFEST.title": "血壤",
-  "GUNBREAKER_MOD_CARD_BLOODFEST.description": "获得{CartridgeGain:diff}档晶壤。"
+  "GUNBREAKER_MOD_CARD_BLOODFEST.description": "获得{CartridgeGain:diff()}档晶壤。",
+
+  "GUNBREAKER_MOD_CARD_LIGHTNING_SHOT.title": "闪雷弹",
+  "GUNBREAKER_MOD_CARD_LIGHTNING_SHOT.description": "造成{Damage:diff()}点伤害，抽{Draw:diff()}张牌。",
+  "GUNBREAKER_MOD_CARD_ROUGH_DIVIDE.title": "粗分斩",
+  "GUNBREAKER_MOD_CARD_ROUGH_DIVIDE.description": "造成{Damage:diff()}点伤害，抽{Draw:diff()}张牌。"
 }
