@@ -9,5 +9,10 @@
   "GUNBREAKER_MOD_CARD_BRUTAL_SHELL.title": "残暴弹",
   "GUNBREAKER_MOD_CARD_BRUTAL_SHELL.description": "造成{Damage}点伤害，获得{Block}点格挡，在手牌中生成一张【迅连斩】。",
   "GUNBREAKER_MOD_CARD_SOLID_BARREL.title": "迅连斩",
-  "GUNBREAKER_MOD_CARD_SOLID_BARREL.description": "造成{Damage}点伤害，获得{EnergyGain}点能量，获得1档晶壤。"
+  "GUNBREAKER_MOD_CARD_SOLID_BARREL.description": "造成{Damage}点伤害，获得{EnergyGain}点能量，获得1档晶壤。",
+
+  "GUNBREAKER_MOD_CARD_NO_MERCY.title": "无情",
+  "GUNBREAKER_MOD_CARD_NO_MERCY.description": "获得{Strength}点力量，持续{Duration}回合。",
+  "GUNBREAKER_MOD_CARD_BURST_STRIKE.title": "爆发打击",
+  "GUNBREAKER_MOD_CARD_BURST_STRIKE.description": "消耗1档晶壤。造成{Damage}点伤害。"
 }

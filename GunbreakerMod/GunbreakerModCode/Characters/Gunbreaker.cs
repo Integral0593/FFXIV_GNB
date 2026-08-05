@@ -46,8 +46,13 @@ public sealed class Gunbreaker : ModCharacterTemplate<GunbreakerCardPool, Gunbre
             CharacterSelectBgPath = "res://GunbreakerMod/images/character_select_bg.png",
             CharacterSelectIconPath = "res://GunbreakerMod/images/character_select_icon.png",
             CharacterSelectLockedIconPath = "res://GunbreakerMod/images/character_select_icon_locked.png",
-            IconTexturePath = "res://GunbreakerMod/images/icon.png",
-            IconOutlineTexturePath = "res://GunbreakerMod/images/icon_outline.png",
+            // Top-left run/combat HUD portrait - uses the avatar art specifically, per request.
+            // Both IconTexturePath (top_panel context) and IconPath (character_icons scene
+            // context, texture-fallback also supported) point at it since it wasn't clear which
+            // one is the exact element being seen; safe to cover both.
+            IconTexturePath = "res://GunbreakerMod/images/map_marker.png",
+            IconOutlineTexturePath = "res://GunbreakerMod/images/map_marker.png",
+            IconPath = "res://GunbreakerMod/images/map_marker.png",
             MapMarkerPath = "res://GunbreakerMod/images/map_marker.png",
         },
         Scenes = new()

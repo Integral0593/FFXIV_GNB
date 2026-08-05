@@ -9,5 +9,10 @@
   "GUNBREAKER_MOD_CARD_BRUTAL_SHELL.title": "Brutal Shell",
   "GUNBREAKER_MOD_CARD_BRUTAL_SHELL.description": "Deal {Damage} damage. Gain {Block} Block. Generate a Solid Barrel in your hand.",
   "GUNBREAKER_MOD_CARD_SOLID_BARREL.title": "Solid Barrel",
-  "GUNBREAKER_MOD_CARD_SOLID_BARREL.description": "Deal {Damage} damage. Gain {EnergyGain} Energy. Gain 1 Cartridge."
+  "GUNBREAKER_MOD_CARD_SOLID_BARREL.description": "Deal {Damage} damage. Gain {EnergyGain} Energy. Gain 1 Cartridge.",
+
+  "GUNBREAKER_MOD_CARD_NO_MERCY.title": "No Mercy",
+  "GUNBREAKER_MOD_CARD_NO_MERCY.description": "Gain {Strength} Strength for {Duration} turns.",
+  "GUNBREAKER_MOD_CARD_BURST_STRIKE.title": "Burst Strike",
+  "GUNBREAKER_MOD_CARD_BURST_STRIKE.description": "Costs 1 Cartridge. Deal {Damage} damage."
 }
