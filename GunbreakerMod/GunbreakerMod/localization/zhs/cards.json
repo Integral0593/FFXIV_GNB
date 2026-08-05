@@ -2,5 +2,12 @@
   "GUNBREAKER_MOD_CARD_STRIKE_GNB.title": "打击",
   "GUNBREAKER_MOD_CARD_STRIKE_GNB.description": "造成{Damage}点伤害。",
   "GUNBREAKER_MOD_CARD_DEFEND_GNB.title": "防御",
-  "GUNBREAKER_MOD_CARD_DEFEND_GNB.description": "获得{Block}点格挡。"
+  "GUNBREAKER_MOD_CARD_DEFEND_GNB.description": "获得{Block}点格挡。",
+
+  "GUNBREAKER_MOD_CARD_KEEN_EDGE.title": "利刃斩",
+  "GUNBREAKER_MOD_CARD_KEEN_EDGE.description": "造成{Damage}点伤害，在手牌中生成一张【残暴弹】。",
+  "GUNBREAKER_MOD_CARD_BRUTAL_SHELL.title": "残暴弹",
+  "GUNBREAKER_MOD_CARD_BRUTAL_SHELL.description": "造成{Damage}点伤害，获得{Block}点格挡，在手牌中生成一张【迅连斩】。",
+  "GUNBREAKER_MOD_CARD_SOLID_BARREL.title": "迅连斩",
+  "GUNBREAKER_MOD_CARD_SOLID_BARREL.description": "造成{Damage}点伤害，获得{EnergyGain}点能量，获得1档晶壤。"
 }

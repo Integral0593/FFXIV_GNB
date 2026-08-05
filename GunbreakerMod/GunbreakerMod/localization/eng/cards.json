@@ -2,5 +2,12 @@
   "GUNBREAKER_MOD_CARD_STRIKE_GNB.title": "Strike",
   "GUNBREAKER_MOD_CARD_STRIKE_GNB.description": "Deal {Damage} damage.",
   "GUNBREAKER_MOD_CARD_DEFEND_GNB.title": "Defend",
-  "GUNBREAKER_MOD_CARD_DEFEND_GNB.description": "Gain {Block} Block."
+  "GUNBREAKER_MOD_CARD_DEFEND_GNB.description": "Gain {Block} Block.",
+
+  "GUNBREAKER_MOD_CARD_KEEN_EDGE.title": "Keen Edge",
+  "GUNBREAKER_MOD_CARD_KEEN_EDGE.description": "Deal {Damage} damage. Generate a Brutal Shell in your hand.",
+  "GUNBREAKER_MOD_CARD_BRUTAL_SHELL.title": "Brutal Shell",
+  "GUNBREAKER_MOD_CARD_BRUTAL_SHELL.description": "Deal {Damage} damage. Gain {Block} Block. Generate a Solid Barrel in your hand.",
+  "GUNBREAKER_MOD_CARD_SOLID_BARREL.title": "Solid Barrel",
+  "GUNBREAKER_MOD_CARD_SOLID_BARREL.description": "Deal {Damage} damage. Gain {EnergyGain} Energy. Gain 1 Cartridge."
 }

@@ -1,5 +1,6 @@
 using System.Reflection;
 using Godot;
+using GunbreakerMod.GunbreakerModCode.Resources;
 using MegaCrit.Sts2.Core.Modding;
 using STS2RitsuLib;
 using STS2RitsuLib.Interop;
@@ -20,5 +21,7 @@ public partial class MainFile : Node
 
         Logger = RitsuLibFramework.CreateLogger(ModId);
         ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
+
+        _ = CartridgeResource.Definition; // force secondary-resource registration early
     }
 }
