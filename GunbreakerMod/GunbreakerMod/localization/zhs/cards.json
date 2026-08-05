@@ -47,5 +47,18 @@
   "GUNBREAKER_MOD_CARD_RAMPART.title": "铁壁",
   "GUNBREAKER_MOD_CARD_RAMPART.description": "获得{Block:diff()}点格挡，给予所有敌人{WeakPower:diff()}层虚弱。",
   "GUNBREAKER_MOD_CARD_HEART_OF_CORUNDUM.title": "刚玉之心",
-  "GUNBREAKER_MOD_CARD_HEART_OF_CORUNDUM.description": "获得{Block:diff()}点格挡，获得1档晶壤，所有敌人本回合失去{Strength:diff()}点力量。"
+  "GUNBREAKER_MOD_CARD_HEART_OF_CORUNDUM.description": "获得{Block:diff()}点格挡，获得1档晶壤，所有敌人本回合失去{Strength:diff()}点力量。",
+
+  "GUNBREAKER_MOD_CARD_GNASHING_FANG.title": "烈牙",
+  "GUNBREAKER_MOD_CARD_GNASHING_FANG.description": "消耗1档晶壤。造成{Damage:diff()}点伤害，在手牌中生成一张【猛兽爪】。",
+  "GUNBREAKER_MOD_CARD_SAVAGE_CLAW.title": "猛兽爪",
+  "GUNBREAKER_MOD_CARD_SAVAGE_CLAW.description": "造成{Damage:diff()}点伤害，在手牌中生成一张【凶禽爪】。",
+  "GUNBREAKER_MOD_CARD_WICKED_TALON.title": "凶禽爪",
+  "GUNBREAKER_MOD_CARD_WICKED_TALON.description": "造成{Damage:diff()}点伤害。",
+  "GUNBREAKER_MOD_CARD_JUGULAR_RIP.title": "撕喉",
+  "GUNBREAKER_MOD_CARD_JUGULAR_RIP.description": "造成{Damage:diff()}点伤害。",
+  "GUNBREAKER_MOD_CARD_ABDOMEN_TEAR.title": "裂膛",
+  "GUNBREAKER_MOD_CARD_ABDOMEN_TEAR.description": "造成{Damage:diff()}点伤害。",
+  "GUNBREAKER_MOD_CARD_EYE_GOUGE.title": "穿目",
+  "GUNBREAKER_MOD_CARD_EYE_GOUGE.description": "造成{Damage:diff()}点伤害。"
 }

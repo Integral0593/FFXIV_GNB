@@ -34,6 +34,10 @@ public sealed class BurstStrike() : ModCardTemplate(0, CardType.Attack, CardRari
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(7m, ValueProp.Move)];
 
+    // Gold glow when affordable, mirroring the base game's GrandFinale (ShouldGlowGoldInternal tied
+    // to its own special-condition check, confirmed via decompile).
+    protected override bool ShouldGlowGoldInternal => CartridgeResource.HasAtLeast(Owner, 1);
+
     public override void AfterCreated()
     {
         base.AfterCreated();

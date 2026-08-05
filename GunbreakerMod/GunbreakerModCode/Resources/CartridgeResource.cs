@@ -2,6 +2,7 @@ using System.Linq;
 using GunbreakerMod.GunbreakerModCode;
 using GunbreakerMod.GunbreakerModCode.Characters;
 using Godot;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using STS2RitsuLib;
 using STS2RitsuLib.Combat.SecondaryResources;
@@ -39,6 +40,10 @@ public static class CartridgeResource
     public static SecondaryResourceDefinition Definition => _definition ??= Register();
 
     public static string Id => Definition.Id;
+
+    // Shared by cards that want the "glow gold when affordable" highlight (see GrandFinale's
+    // ShouldGlowGoldInternal pattern in the base game) - e.g. Burst Strike/Double Down.
+    public static bool HasAtLeast(Player owner, int amount) => SecondaryResourceStateStore.GetAmount(owner, Id) >= amount;
 
     private static SecondaryResourceDefinition Register()
     {

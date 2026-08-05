@@ -24,6 +24,8 @@ public sealed class DoubleDown() : ModCardTemplate(0, CardType.Attack, CardRarit
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(40m, ValueProp.Move)];
 
+    protected override bool ShouldGlowGoldInternal => CartridgeResource.HasAtLeast(Owner, 2);
+
     public override void AfterCreated()
     {
         base.AfterCreated();

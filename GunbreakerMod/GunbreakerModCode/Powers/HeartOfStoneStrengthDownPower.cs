@@ -13,12 +13,17 @@ namespace GunbreakerMod.GunbreakerModCode.Powers;
 // Mirrors NoMercyPower's own "apply Strength, revert on removal" pattern instead of subclassing the
 // base game's abstract TemporaryStrengthPower - that path pulls in vanilla's own Title/Description/
 // HoverTip resolution via OriginModel, which didn't render cleanly for a modded card in testing.
+// IsVisibleInternal = false so only the underlying StrengthPower debuff shows on the enemy - this
+// tracking power still applies/reverts Strength normally, it just doesn't render its own separate
+// icon (per user feedback: the enemy should show exactly one debuff, not two stacked icons).
 [RegisterPower]
 public sealed class HeartOfStoneStrengthDownPower : PowerModel
 {
     public override PowerType Type => PowerType.Debuff;
 
     public override PowerStackType StackType => PowerStackType.Counter;
+
+    protected override bool IsVisibleInternal => false;
 
     public override async Task BeforeApplied(Creature target, decimal amount, Creature? applier, CardModel? cardSource)
     {

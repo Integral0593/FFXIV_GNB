@@ -47,5 +47,18 @@
   "GUNBREAKER_MOD_CARD_RAMPART.title": "Rampart",
   "GUNBREAKER_MOD_CARD_RAMPART.description": "Gain {Block:diff()} Block. Apply {WeakPower:diff()} Weak to ALL enemies.",
   "GUNBREAKER_MOD_CARD_HEART_OF_CORUNDUM.title": "Heart of Corundum",
-  "GUNBREAKER_MOD_CARD_HEART_OF_CORUNDUM.description": "Gain {Block:diff()} Block. Gain 1 Cartridge. All enemies lose {Strength:diff()} Strength this turn."
+  "GUNBREAKER_MOD_CARD_HEART_OF_CORUNDUM.description": "Gain {Block:diff()} Block. Gain 1 Cartridge. All enemies lose {Strength:diff()} Strength this turn.",
+
+  "GUNBREAKER_MOD_CARD_GNASHING_FANG.title": "Gnashing Fang",
+  "GUNBREAKER_MOD_CARD_GNASHING_FANG.description": "Costs 1 Cartridge. Deal {Damage:diff()} damage. Generate a Savage Claw in your hand.",
+  "GUNBREAKER_MOD_CARD_SAVAGE_CLAW.title": "Savage Claw",
+  "GUNBREAKER_MOD_CARD_SAVAGE_CLAW.description": "Deal {Damage:diff()} damage. Generate a Wicked Talon in your hand.",
+  "GUNBREAKER_MOD_CARD_WICKED_TALON.title": "Wicked Talon",
+  "GUNBREAKER_MOD_CARD_WICKED_TALON.description": "Deal {Damage:diff()} damage.",
+  "GUNBREAKER_MOD_CARD_JUGULAR_RIP.title": "Jugular Rip",
+  "GUNBREAKER_MOD_CARD_JUGULAR_RIP.description": "Deal {Damage:diff()} damage.",
+  "GUNBREAKER_MOD_CARD_ABDOMEN_TEAR.title": "Abdomen Tear",
+  "GUNBREAKER_MOD_CARD_ABDOMEN_TEAR.description": "Deal {Damage:diff()} damage.",
+  "GUNBREAKER_MOD_CARD_EYE_GOUGE.title": "Eye Gouge",
+  "GUNBREAKER_MOD_CARD_EYE_GOUGE.description": "Deal {Damage:diff()} damage."
 }
