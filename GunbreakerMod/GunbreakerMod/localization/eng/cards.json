@@ -1,18 +1,25 @@
 {
   "GUNBREAKER_MOD_CARD_STRIKE_GNB.title": "Strike",
-  "GUNBREAKER_MOD_CARD_STRIKE_GNB.description": "Deal {Damage} damage.",
+  "GUNBREAKER_MOD_CARD_STRIKE_GNB.description": "Deal {Damage:diff} damage.",
   "GUNBREAKER_MOD_CARD_DEFEND_GNB.title": "Defend",
-  "GUNBREAKER_MOD_CARD_DEFEND_GNB.description": "Gain {Block} Block.",
+  "GUNBREAKER_MOD_CARD_DEFEND_GNB.description": "Gain {Block:diff} Block.",
 
   "GUNBREAKER_MOD_CARD_KEEN_EDGE.title": "Keen Edge",
-  "GUNBREAKER_MOD_CARD_KEEN_EDGE.description": "Deal {Damage} damage. Generate a Brutal Shell in your hand.",
+  "GUNBREAKER_MOD_CARD_KEEN_EDGE.description": "Deal {Damage:diff} damage. Generate a Brutal Shell in your hand.",
   "GUNBREAKER_MOD_CARD_BRUTAL_SHELL.title": "Brutal Shell",
-  "GUNBREAKER_MOD_CARD_BRUTAL_SHELL.description": "Deal {Damage} damage. Gain {Block} Block. Generate a Solid Barrel in your hand.",
+  "GUNBREAKER_MOD_CARD_BRUTAL_SHELL.description": "Deal {Damage:diff} damage. Gain {Block:diff} Block. Generate a Solid Barrel in your hand.",
   "GUNBREAKER_MOD_CARD_SOLID_BARREL.title": "Solid Barrel",
-  "GUNBREAKER_MOD_CARD_SOLID_BARREL.description": "Deal {Damage} damage. Gain {EnergyGain} Energy. Gain 1 Cartridge.",
+  "GUNBREAKER_MOD_CARD_SOLID_BARREL.description": "Deal {Damage:diff} damage. Gain {EnergyGain:diff} Energy. Gain 1 Cartridge.",
 
   "GUNBREAKER_MOD_CARD_NO_MERCY.title": "No Mercy",
-  "GUNBREAKER_MOD_CARD_NO_MERCY.description": "Gain {Strength} Strength for {Duration} turns.",
+  "GUNBREAKER_MOD_CARD_NO_MERCY.description": "Gain {Strength:diff} Strength for {Duration} turns.",
   "GUNBREAKER_MOD_CARD_BURST_STRIKE.title": "Burst Strike",
-  "GUNBREAKER_MOD_CARD_BURST_STRIKE.description": "Costs 1 Cartridge. Deal {Damage} damage."
+  "GUNBREAKER_MOD_CARD_BURST_STRIKE.description": "Costs 1 Cartridge. Deal {Damage:diff} damage.",
+
+  "GUNBREAKER_MOD_CARD_DEMON_SLICE.title": "Demon Slice",
+  "GUNBREAKER_MOD_CARD_DEMON_SLICE.description": "Deal {Damage:diff} damage to ALL enemies. Generate a Demon Slaughter in your hand.",
+  "GUNBREAKER_MOD_CARD_DEMON_SLAUGHTER.title": "Demon Slaughter",
+  "GUNBREAKER_MOD_CARD_DEMON_SLAUGHTER.description": "Deal {Damage:diff} damage to ALL enemies. Gain 1 Cartridge.",
+  "GUNBREAKER_MOD_CARD_BLOODFEST.title": "Bloodfest",
+  "GUNBREAKER_MOD_CARD_BLOODFEST.description": "Gain {CartridgeGain:diff} Cartridges."
 }
