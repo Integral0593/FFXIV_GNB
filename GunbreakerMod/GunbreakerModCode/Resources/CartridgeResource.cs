@@ -33,7 +33,9 @@ public static class CartridgeResource
     private const float GapAboveEnergyOrb = 14f;
 
     private static readonly Color LitColor = new(0.25f, 0.85f, 1f);
-    private static readonly Color UnlitColor = new(0.28f, 0.28f, 0.32f);
+    // Lighter than the first pass (0.28) - the darker gray read as "not there at all" against the
+    // combat background rather than "an empty slot", per user feedback.
+    private static readonly Color UnlitColor = new(0.55f, 0.55f, 0.6f);
 
     private static SecondaryResourceDefinition? _definition;
 

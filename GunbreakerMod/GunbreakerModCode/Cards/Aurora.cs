@@ -23,9 +23,11 @@ public sealed class Aurora() : ModCardTemplate(0, CardType.Skill, CardRarity.Com
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<RegenPower>(5m)];
 
-    public override void AfterCreated()
+    // AfterCloned(), not AfterCreated() - see BurstStrike.cs for why (AttachedState cost data isn't
+    // copied by clone paths that skip AfterCreated, e.g. per-combat instance cloning).
+    protected override void AfterCloned()
     {
-        base.AfterCreated();
+        base.AfterCloned();
         this.SecondaryCosts().Set(CartridgeResource.Id, 1);
     }
 

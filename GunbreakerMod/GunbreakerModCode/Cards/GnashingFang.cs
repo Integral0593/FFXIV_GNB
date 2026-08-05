@@ -26,9 +26,10 @@ public sealed class GnashingFang() : ModCardTemplate(0, CardType.Attack, CardRar
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(8m, ValueProp.Move)];
 
-    public override void AfterCreated()
+    // AfterCloned(), not AfterCreated() - see BurstStrike.cs for why.
+    protected override void AfterCloned()
     {
-        base.AfterCreated();
+        base.AfterCloned();
         this.SecondaryCosts().Set(CartridgeResource.Id, 1);
     }
 

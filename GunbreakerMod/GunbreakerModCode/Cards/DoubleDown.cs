@@ -26,9 +26,12 @@ public sealed class DoubleDown() : ModCardTemplate(0, CardType.Attack, CardRarit
 
     protected override bool ShouldGlowGoldInternal => CartridgeResource.HasAtLeast(Owner, 2);
 
-    public override void AfterCreated()
+    // AfterCloned(), not AfterCreated() - see BurstStrike.cs for why (this is the exact bug that let
+    // Double Down be played with 0 Cartridge: its combat-instance is a fresh clone that never got
+    // AfterCreated() called on it again, so it carried no cost requirement at all).
+    protected override void AfterCloned()
     {
-        base.AfterCreated();
+        base.AfterCloned();
         this.SecondaryCosts().Set(CartridgeResource.Id, 2);
     }
 

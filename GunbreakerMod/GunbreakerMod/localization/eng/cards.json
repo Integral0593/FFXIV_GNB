@@ -60,5 +60,12 @@
   "GUNBREAKER_MOD_CARD_ABDOMEN_TEAR.title": "Abdomen Tear",
   "GUNBREAKER_MOD_CARD_ABDOMEN_TEAR.description": "Deal {Damage:diff()} damage.",
   "GUNBREAKER_MOD_CARD_EYE_GOUGE.title": "Eye Gouge",
-  "GUNBREAKER_MOD_CARD_EYE_GOUGE.description": "Deal {Damage:diff()} damage."
+  "GUNBREAKER_MOD_CARD_EYE_GOUGE.description": "Deal {Damage:diff()} damage.",
+
+  "GUNBREAKER_MOD_CARD_FATED_CIRCLE.title": "Fated Circle",
+  "GUNBREAKER_MOD_CARD_FATED_CIRCLE.description": "Costs 1 Cartridge. Deal {Damage:diff()} damage to ALL enemies.",
+  "GUNBREAKER_MOD_CARD_FATED_BRAND.title": "Fated Brand",
+  "GUNBREAKER_MOD_CARD_FATED_BRAND.description": "Deal {Damage:diff()} damage to ALL enemies.",
+  "GUNBREAKER_MOD_CARD_TRAJECTORY.title": "Trajectory",
+  "GUNBREAKER_MOD_CARD_TRAJECTORY.description": "Draw {Draw:diff()} cards."
 }

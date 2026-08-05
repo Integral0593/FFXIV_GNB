@@ -38,9 +38,17 @@ public sealed class BurstStrike() : ModCardTemplate(0, CardType.Attack, CardRari
     // to its own special-condition check, confirmed via decompile).
     protected override bool ShouldGlowGoldInternal => CartridgeResource.HasAtLeast(Owner, 1);
 
-    public override void AfterCreated()
+    // Secondary costs are stored in an AttachedState dictionary keyed by CardModel instance, not
+    // copied by the base game's own clone machinery - AfterCreated() only fires on the specific
+    // instance it's called on, and paths like combat-instance cloning (RunState.CloneCard, used by
+    // CombatState.CreateCard) never call it again on the clone. AfterCloned() is CardModel's actual
+    // universal clone hook (confirmed via decompiling AbstractModel.MutableClone: DeepCloneFields()
+    // then AfterCloned(), unconditionally, for every ToMutable()/ClonePreservingMutability() call) -
+    // re-applying the cost here instead of AfterCreated() is what was missing a Cartridge requirement
+    // on cards played from a fresh per-combat clone.
+    protected override void AfterCloned()
     {
-        base.AfterCreated();
+        base.AfterCloned();
         this.SecondaryCosts().Set(CartridgeResource.Id, 1);
     }
 

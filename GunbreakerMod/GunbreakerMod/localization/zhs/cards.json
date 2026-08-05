@@ -60,5 +60,12 @@
   "GUNBREAKER_MOD_CARD_ABDOMEN_TEAR.title": "裂膛",
   "GUNBREAKER_MOD_CARD_ABDOMEN_TEAR.description": "造成{Damage:diff()}点伤害。",
   "GUNBREAKER_MOD_CARD_EYE_GOUGE.title": "穿目",
-  "GUNBREAKER_MOD_CARD_EYE_GOUGE.description": "造成{Damage:diff()}点伤害。"
+  "GUNBREAKER_MOD_CARD_EYE_GOUGE.description": "造成{Damage:diff()}点伤害。",
+
+  "GUNBREAKER_MOD_CARD_FATED_CIRCLE.title": "命运之环",
+  "GUNBREAKER_MOD_CARD_FATED_CIRCLE.description": "消耗1档晶壤。对所有敌人造成{Damage:diff()}点伤害。",
+  "GUNBREAKER_MOD_CARD_FATED_BRAND.title": "命运之印",
+  "GUNBREAKER_MOD_CARD_FATED_BRAND.description": "对所有敌人造成{Damage:diff()}点伤害。",
+  "GUNBREAKER_MOD_CARD_TRAJECTORY.title": "弹道",
+  "GUNBREAKER_MOD_CARD_TRAJECTORY.description": "抽{Draw:diff()}张牌。"
 }
