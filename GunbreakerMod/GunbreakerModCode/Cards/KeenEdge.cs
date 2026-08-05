@@ -1,3 +1,4 @@
+using GunbreakerMod.GunbreakerModCode.Characters;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -9,7 +10,12 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace GunbreakerMod.GunbreakerModCode.Cards;
 
 // 利刃斩 Keen Edge - basic combo opener. Generates Brutal Shell into hand on play.
+// Starter count: the design sheet doesn't give an explicit count for this one (unlike
+// Strike_GNB "起始卡组3张" / Defend_GNB "4张"), just "起始牌库买一送二，牌库里只有1".
+// Defaulting to 1 copy, mirroring how vanilla Ironclad's signature attack (Bash) gets exactly
+// 1 starting copy alongside Strike/Defend - please correct the count if that's not what you meant.
 [RegisterCard(typeof(GunbreakerCardPool))]
+[RegisterCharacterStarterCard(typeof(Gunbreaker), 1)]
 public sealed class KeenEdge() : ModCardTemplate(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy)
 {
     public override CardAssetProfile AssetProfile => new()
