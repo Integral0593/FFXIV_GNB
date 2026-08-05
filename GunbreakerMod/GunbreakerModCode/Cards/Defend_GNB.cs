@@ -1,3 +1,4 @@
+using GunbreakerMod.GunbreakerModCode.Characters;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -10,6 +11,7 @@ namespace GunbreakerMod.GunbreakerModCode.Cards;
 
 // 防御 Defend - starter skill, 4 copies in the starting deck.
 [RegisterCard(typeof(GunbreakerCardPool))]
+[RegisterCharacterStarterCard(typeof(Gunbreaker), 4)]
 public sealed class Defend_GNB() : ModCardTemplate(1, CardType.Skill, CardRarity.Basic, TargetType.Self)
 {
     public override bool GainsBlock => true;

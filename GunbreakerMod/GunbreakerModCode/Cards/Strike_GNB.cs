@@ -1,3 +1,4 @@
+using GunbreakerMod.GunbreakerModCode.Characters;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -10,6 +11,7 @@ namespace GunbreakerMod.GunbreakerModCode.Cards;
 
 // 打击 Strike - starter attack, 3 copies in the starting deck.
 [RegisterCard(typeof(GunbreakerCardPool))]
+[RegisterCharacterStarterCard(typeof(Gunbreaker), 3)]
 public sealed class Strike_GNB() : ModCardTemplate(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy)
 {
     protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];
