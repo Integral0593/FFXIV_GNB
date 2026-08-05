@@ -6,14 +6,36 @@ using STS2RitsuLib.Scaffolding.Characters;
 
 namespace GunbreakerMod.GunbreakerModCode.Characters;
 
-// Framework-only pass: no custom art yet, so AssetProfile is left at its default (empty),
-// which makes ModCharacterTemplate fall back to Ironclad's visuals/animations/icons entirely
-// via PlaceholderCharacterId. Epoch/Timeline (Ancients) content is opted out of below, since
-// none is designed yet. Starting deck comes from [RegisterCharacterStarterCard] on the cards
-// themselves (Strike_GNB x3, Defend_GNB x4); no starting relic yet.
+// Framework-only pass. Character-select identity (icon/locked-icon/top-panel icon/select
+// background/map marker) uses our own mod-owned placeholder assets, NOT Ironclad's - reusing
+// Ironclad's literal res:// paths there made this character visually indistinguishable from
+// the real Ironclad in the character-select screen (confirmed via game logs: the actual run
+// that started was CHARACTER.IRONCLAD, not ours - the user was clicking the vanilla character
+// by mistake because the icons were identical).
+//
+// Everything NOT overridden below (in-combat Spine body, energy counter scene, merchant/rest-site
+// anim, trail vfx, sfx) still falls back to Ironclad via PlaceholderCharacterId. That's lower risk
+// to leave aliased for now since it doesn't affect character *selection*, only in-combat rendering,
+// and building a safe custom NCreatureVisuals node tree without a real Godot scene is nontrivial.
+// Epoch/Timeline (Ancients) content is opted out of below, since none is designed yet. Starting
+// deck comes from [RegisterCharacterStarterCard] on the cards themselves (Strike_GNB x3,
+// Defend_GNB x4); no starting relic yet.
 [RegisterCharacter]
 public sealed class Gunbreaker : ModCharacterTemplate<GunbreakerCardPool, GunbreakerRelicPool, GunbreakerPotionPool>
 {
+    public override CharacterAssetProfile AssetProfile => new()
+    {
+        Ui = new()
+        {
+            CharacterSelectBgPath = "res://GunbreakerMod/images/character_select_bg.png",
+            CharacterSelectIconPath = "res://GunbreakerMod/images/character_select_icon.png",
+            CharacterSelectLockedIconPath = "res://GunbreakerMod/images/character_select_icon_locked.png",
+            IconTexturePath = "res://GunbreakerMod/images/icon.png",
+            IconOutlineTexturePath = "res://GunbreakerMod/images/icon_outline.png",
+            MapMarkerPath = "res://GunbreakerMod/images/map_marker.png",
+        },
+    };
+
     public override bool RequiresEpochAndTimeline => false;
 
     public override CharacterGender Gender => CharacterGender.Neutral;
