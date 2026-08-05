@@ -14,7 +14,7 @@
   "GUNBREAKER_MOD_CARD_NO_MERCY.title": "无情",
   "GUNBREAKER_MOD_CARD_NO_MERCY.description": "获得{Strength:diff()}点力量，持续{Duration}回合。",
   "GUNBREAKER_MOD_CARD_BURST_STRIKE.title": "爆发打击",
-  "GUNBREAKER_MOD_CARD_BURST_STRIKE.description": "消耗1档晶壤。造成{Damage:diff()}点伤害。若你的晶壤达到上限，在手牌中生成一张【爆发打击】。",
+  "GUNBREAKER_MOD_CARD_BURST_STRIKE.description": "消耗1档晶壤。造成{Damage:diff()}点伤害。当你的晶壤达到上限时，将本卡加入你的手牌。",
 
   "GUNBREAKER_MOD_CARD_CONTINUATION.title": "续剑",
   "GUNBREAKER_MOD_CARD_CONTINUATION.description": "你每次消耗晶壤时，在手牌中生成一张对应的续剑攻击牌。",
@@ -40,5 +40,12 @@
   "GUNBREAKER_MOD_CARD_SONIC_BREAK.title": "音速破",
   "GUNBREAKER_MOD_CARD_SONIC_BREAK.description": "造成{Damage:diff()}点伤害，给予{VulnerablePower:diff()}层易伤。",
   "GUNBREAKER_MOD_CARD_BOW_SHOCK.title": "弓形冲波",
-  "GUNBREAKER_MOD_CARD_BOW_SHOCK.description": "给予所有敌人{VulnerablePower:diff()}层易伤。"
+  "GUNBREAKER_MOD_CARD_BOW_SHOCK.description": "给予所有敌人{VulnerablePower:diff()}层易伤。",
+
+  "GUNBREAKER_MOD_CARD_DOUBLE_DOWN.title": "倍攻",
+  "GUNBREAKER_MOD_CARD_DOUBLE_DOWN.description": "消耗2档晶壤。对所有敌人造成{Damage:diff()}点伤害。",
+  "GUNBREAKER_MOD_CARD_RAMPART.title": "铁壁",
+  "GUNBREAKER_MOD_CARD_RAMPART.description": "获得{Block:diff()}点格挡，给予所有敌人{WeakPower:diff()}层虚弱。",
+  "GUNBREAKER_MOD_CARD_HEART_OF_CORUNDUM.title": "刚玉之心",
+  "GUNBREAKER_MOD_CARD_HEART_OF_CORUNDUM.description": "获得{Block:diff()}点格挡，获得1档晶壤，所有敌人本回合失去{Strength:diff()}点力量。"
 }

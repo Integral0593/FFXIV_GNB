@@ -13,16 +13,19 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace GunbreakerMod.GunbreakerModCode.Cards;
 
 // 爆发打击 Burst Strike - 0-cost Cartridge spender, starter card.
-// Two independent on-play generation effects, both confirmed against the design table:
-// 1. Its own innate effect: if Cartridge was at the cap right before this card paid its 1-Cartridge
-//    cost, generate another Burst Strike into hand. Secondary costs are paid before OnPlay runs
-//    (confirmed by decompiling CardModel.OnPlayWrapper - it receives the already-resolved
-//    ResourceInfo), so by the time OnPlay executes the 1 Cartridge is already spent; "was at cap"
-//    is reconstructed as currentAmount + 1 >= maxAmount.
-// 2. Continuation's effect: if the player has ContinuationPower, generate a Hypervelocity into hand.
+// Two independent effects, both confirmed against the design table:
+// 1. Continuation's effect (on play): if the player has ContinuationPower, generate a Hypervelocity
+//    into hand.
+// 2. Its own innate effect (reactive, NOT tied to playing this card): whenever Cartridge reaches its
+//    cap by any means, move this exact card into hand from wherever it currently sits - no new copy,
+//    deck size never changes. Implemented via ISecondaryResourceHookListener.AfterSecondaryResourceChanged,
+//    which RitsuLib dispatches to every card in the player's deck whose Pile is a combat pile
+//    (confirmed via decompiling CardModel.ShouldReceiveCombatHooks and SecondaryResourceHook's
+//    listener dispatch) - so this fires regardless of which card caused the gain, not just self-play.
 [RegisterCard(typeof(GunbreakerCardPool))]
 [RegisterCharacterStarterCard(typeof(Gunbreaker), 1)]
-public sealed class BurstStrike() : ModCardTemplate(0, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy)
+public sealed class BurstStrike() : ModCardTemplate(0, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy),
+    ISecondaryResourceHookListener
 {
     public override CardAssetProfile AssetProfile => new()
     {
@@ -45,18 +48,6 @@ public sealed class BurstStrike() : ModCardTemplate(0, CardType.Attack, CardRari
             .Targeting(cardPlay.Target)
             .Execute(choiceContext);
 
-        var maxCartridge = SecondaryResourceStateStore.GetMaxAmount(Owner, CartridgeResource.Id) ?? 0;
-        var currentCartridge = SecondaryResourceStateStore.GetAmount(Owner, CartridgeResource.Id);
-        if (currentCartridge + 1 >= maxCartridge)
-        {
-            var extraBurstStrike = CombatState.CreateCard<BurstStrike>(Owner);
-            if (IsUpgraded)
-            {
-                CardCmd.Upgrade(extraBurstStrike);
-            }
-            await CardPileCmd.AddGeneratedCardToCombat(extraBurstStrike, PileType.Hand, Owner);
-        }
-
         if (Owner.Creature.HasPower<ContinuationPower>())
         {
             var hypervelocity = CombatState.CreateCard<Hypervelocity>(Owner);
@@ -65,6 +56,22 @@ public sealed class BurstStrike() : ModCardTemplate(0, CardType.Attack, CardRari
                 CardCmd.Upgrade(hypervelocity);
             }
             await CardPileCmd.AddGeneratedCardToCombat(hypervelocity, PileType.Hand, Owner);
+        }
+    }
+
+    public async Task AfterSecondaryResourceChanged(SecondaryResourceChangeContext context)
+    {
+        if (context.Definition.Id != CartridgeResource.Id || context.Player != Owner)
+        {
+            return;
+        }
+        if (context.NewAmount < (context.Definition.BaseMaxAmount ?? int.MaxValue))
+        {
+            return;
+        }
+        if (Pile?.Type is PileType.Draw or PileType.Discard)
+        {
+            await CardPileCmd.Add(this, PileType.Hand);
         }
     }
 

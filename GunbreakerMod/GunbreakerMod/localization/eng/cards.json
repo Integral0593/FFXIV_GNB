@@ -14,7 +14,7 @@
   "GUNBREAKER_MOD_CARD_NO_MERCY.title": "No Mercy",
   "GUNBREAKER_MOD_CARD_NO_MERCY.description": "Gain {Strength:diff()} Strength for {Duration} turns.",
   "GUNBREAKER_MOD_CARD_BURST_STRIKE.title": "Burst Strike",
-  "GUNBREAKER_MOD_CARD_BURST_STRIKE.description": "Costs 1 Cartridge. Deal {Damage:diff()} damage. If your Cartridge is at max, generate a Burst Strike in your hand.",
+  "GUNBREAKER_MOD_CARD_BURST_STRIKE.description": "Costs 1 Cartridge. Deal {Damage:diff()} damage. Whenever your Cartridge reaches max, this card moves into your hand.",
 
   "GUNBREAKER_MOD_CARD_CONTINUATION.title": "Continuation",
   "GUNBREAKER_MOD_CARD_CONTINUATION.description": "Whenever you spend Cartridge, generate its matching follow-up card in your hand.",
@@ -40,5 +40,12 @@
   "GUNBREAKER_MOD_CARD_SONIC_BREAK.title": "Sonic Break",
   "GUNBREAKER_MOD_CARD_SONIC_BREAK.description": "Deal {Damage:diff()} damage. Apply {VulnerablePower:diff()} Vulnerable.",
   "GUNBREAKER_MOD_CARD_BOW_SHOCK.title": "Bow Shock",
-  "GUNBREAKER_MOD_CARD_BOW_SHOCK.description": "Apply {VulnerablePower:diff()} Vulnerable to ALL enemies."
+  "GUNBREAKER_MOD_CARD_BOW_SHOCK.description": "Apply {VulnerablePower:diff()} Vulnerable to ALL enemies.",
+
+  "GUNBREAKER_MOD_CARD_DOUBLE_DOWN.title": "Double Down",
+  "GUNBREAKER_MOD_CARD_DOUBLE_DOWN.description": "Costs 2 Cartridge. Deal {Damage:diff()} damage to ALL enemies.",
+  "GUNBREAKER_MOD_CARD_RAMPART.title": "Rampart",
+  "GUNBREAKER_MOD_CARD_RAMPART.description": "Gain {Block:diff()} Block. Apply {WeakPower:diff()} Weak to ALL enemies.",
+  "GUNBREAKER_MOD_CARD_HEART_OF_CORUNDUM.title": "Heart of Corundum",
+  "GUNBREAKER_MOD_CARD_HEART_OF_CORUNDUM.description": "Gain {Block:diff()} Block. Gain 1 Cartridge. All enemies lose {Strength:diff()} Strength this turn."
 }

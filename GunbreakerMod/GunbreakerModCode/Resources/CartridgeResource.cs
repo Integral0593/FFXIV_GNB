@@ -106,9 +106,14 @@ public static class CartridgeResource
         var energyContainer = ctx.Parent.GetNodeOrNull<Control>("%EnergyCounterContainer");
         if (energyContainer != null)
         {
+            // Center over the actual energy-orb visual (the container's first child, added at
+            // runtime by NCombatUi.Activate), not the container itself - EnergyCounterContainer's
+            // own Size doesn't tightly bound the orb (it's laid out to anchor a larger HUD region),
+            // so centering on it directly pushed the pips noticeably left of the orb in testing.
+            var orb = energyContainer.GetChildOrNull<Control>(0) ?? energyContainer;
             const float rowWidth = Slots * PipSize + (Slots - 1) * PipGap;
-            var targetX = energyContainer.GlobalPosition.X + (energyContainer.Size.X / 2f) - (rowWidth / 2f);
-            var targetY = energyContainer.GlobalPosition.Y - (PipSize + GapAboveEnergyOrb);
+            var targetX = orb.GlobalPosition.X + (orb.Size.X / 2f) - (rowWidth / 2f);
+            var targetY = orb.GlobalPosition.Y - (PipSize + GapAboveEnergyOrb);
             row.GlobalPosition = new Vector2(targetX, targetY);
         }
     }
