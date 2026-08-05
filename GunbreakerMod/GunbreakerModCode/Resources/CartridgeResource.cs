@@ -1,4 +1,3 @@
-using System.Linq;
 using GunbreakerMod.GunbreakerModCode;
 using GunbreakerMod.GunbreakerModCode.Characters;
 using Godot;
@@ -19,22 +18,16 @@ namespace GunbreakerMod.GunbreakerModCode.Resources;
 // counter, since the design calls for lit/unlit slots. There's no built-in "segmented" secondary
 // resource style in RitsuLib (confirmed via decompiling SecondaryResourceCounterStyle/NSecondaryResourceIcon -
 // neither supports multiple discrete pips), so this is a small custom Control built by hand.
-// Positioning: NCombatUi exposes its energy-orb container via the scene-unique name
-// "%EnergyCounterContainer" (confirmed via decompiling NCombatUi._Ready/Activate). Each update tick,
-// this repositions the pip row's GlobalPosition directly above that container instead of hardcoding a
-// pixel offset - correct regardless of resolution or the star-counter-related repositioning NCombatUi
-// itself sometimes applies to the container.
-public static class CartridgeResource
+public static partial class CartridgeResource
 {
     private const string LocalId = "cartridge";
     private const int Slots = 3;
     private const float PipSize = 44f;
     private const float PipGap = 8f;
+    private const float BorderThickness = 3f;
     private const float GapAboveEnergyOrb = 14f;
 
     private static readonly Color LitColor = new(0.25f, 0.85f, 1f);
-    // Lighter than the first pass (0.28) - the darker gray read as "not there at all" against the
-    // combat background rather than "an empty slot", per user feedback.
     private static readonly Color UnlitColor = new(0.55f, 0.55f, 0.6f);
 
     private static SecondaryResourceDefinition? _definition;
@@ -63,65 +56,105 @@ public static class CartridgeResource
         resources.AlwaysShowInCombatUiForCharacter<Gunbreaker>(LocalId, 0);
         resources.RegisterCombatUi(
             LocalId,
-            parent => CreatePipRow(definition),
-            update: UpdatePipRow);
+            parent => new PipRow(),
+            update: ctx => ctx.Node.Owner = ctx.Player);
 
         return definition;
     }
 
-    private static HBoxContainer CreatePipRow(SecondaryResourceDefinition definition)
+    // Drives its own visibility/lit-state/position every frame instead of relying on RitsuLib's
+    // external "update" callback timing. That callback IS still used (see Owner assignment above),
+    // but only to learn who's playing - not to decide when to render. Root cause of the "pips don't
+    // show until the first Cartridge gain" bug: RegisterCombatUi hides new attachments immediately
+    // after registering them (SecondaryResourceUiRuntime.HideCombatUi), and the very first
+    // NCombatUi.Activate()-triggered refresh can race against that same-frame registration and miss
+    // it entirely - the row then sits hidden until the next resource-changed event happens to fire
+    // an update. Owning our own per-frame refresh sidesteps that race completely.
+    private sealed partial class PipRow : HBoxContainer
     {
-        var row = new HBoxContainer { MouseFilter = Control.MouseFilterEnum.Ignore };
-        row.AddThemeConstantOverride("separation", (int)PipGap);
+        public Player? Owner;
 
-        var texture = GD.Load<Texture2D>(definition.SmallIconPath);
-        for (var i = 0; i < Slots; i++)
+        private readonly TextureRect[] _fills = new TextureRect[Slots];
+
+        public override void _Ready()
         {
-            row.AddChild(new TextureRect
+            MouseFilter = MouseFilterEnum.Ignore;
+            AddThemeConstantOverride("separation", (int)PipGap);
+
+            var texture = GD.Load<Texture2D>(Definition.SmallIconPath);
+            for (var i = 0; i < Slots; i++)
             {
-                Texture = texture,
-                CustomMinimumSize = new Vector2(PipSize, PipSize),
-                ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize,
-                StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered,
-                Modulate = UnlitColor,
-                MouseFilter = Control.MouseFilterEnum.Ignore,
-            });
-        }
+                var cell = new Control
+                {
+                    CustomMinimumSize = new Vector2(PipSize, PipSize),
+                    MouseFilter = MouseFilterEnum.Ignore,
+                };
 
-        return row;
-    }
+                var border = new TextureRect
+                {
+                    Texture = texture,
+                    StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered,
+                    Modulate = Colors.White,
+                    MouseFilter = MouseFilterEnum.Ignore,
+                    AnchorRight = 1f,
+                    AnchorBottom = 1f,
+                    OffsetLeft = -BorderThickness,
+                    OffsetTop = -BorderThickness,
+                    OffsetRight = BorderThickness,
+                    OffsetBottom = BorderThickness,
+                };
+                cell.AddChild(border);
 
-    private static void UpdatePipRow(SecondaryResourceCombatUiContext<NCombatUi, HBoxContainer> ctx)
-    {
-        var row = ctx.Node;
-        var isVisible = ctx.Player != null && ctx.VisibleDefinitions.Any(d => d.Id == Id);
-        row.Visible = isVisible;
-        if (!isVisible)
-        {
-            return;
-        }
+                var fill = new TextureRect
+                {
+                    Texture = texture,
+                    StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered,
+                    Modulate = UnlitColor,
+                    MouseFilter = MouseFilterEnum.Ignore,
+                    AnchorRight = 1f,
+                    AnchorBottom = 1f,
+                };
+                cell.AddChild(fill);
 
-        var amount = SecondaryResourceStateStore.GetAmount(ctx.Player!, Id);
-        for (var i = 0; i < row.GetChildCount(); i++)
-        {
-            if (row.GetChild(i) is TextureRect pip)
-            {
-                pip.Modulate = i < amount ? LitColor : UnlitColor;
+                AddChild(cell);
+                _fills[i] = fill;
             }
         }
 
-        var energyContainer = ctx.Parent.GetNodeOrNull<Control>("%EnergyCounterContainer");
-        if (energyContainer != null)
+        public override void _Process(double delta)
         {
+            if (Owner == null)
+            {
+                Visible = false;
+                return;
+            }
+
+            Visible = true;
+            var amount = SecondaryResourceStateStore.GetAmount(Owner, Id);
+            for (var i = 0; i < _fills.Length; i++)
+            {
+                _fills[i].Modulate = i < amount ? LitColor : UnlitColor;
+            }
+
+            if (GetParent() is not NCombatUi combatUi)
+            {
+                return;
+            }
+
+            var energyContainer = combatUi.GetNodeOrNull<Control>("%EnergyCounterContainer");
+            if (energyContainer == null)
+            {
+                return;
+            }
+
             // Center over the actual energy-orb visual (the container's first child, added at
             // runtime by NCombatUi.Activate), not the container itself - EnergyCounterContainer's
-            // own Size doesn't tightly bound the orb (it's laid out to anchor a larger HUD region),
-            // so centering on it directly pushed the pips noticeably left of the orb in testing.
+            // own Size doesn't tightly bound the orb (it's laid out to anchor a larger HUD region).
             var orb = energyContainer.GetChildOrNull<Control>(0) ?? energyContainer;
             const float rowWidth = Slots * PipSize + (Slots - 1) * PipGap;
             var targetX = orb.GlobalPosition.X + (orb.Size.X / 2f) - (rowWidth / 2f);
             var targetY = orb.GlobalPosition.Y - (PipSize + GapAboveEnergyOrb);
-            row.GlobalPosition = new Vector2(targetX, targetY);
+            GlobalPosition = new Vector2(targetX, targetY);
         }
     }
 }

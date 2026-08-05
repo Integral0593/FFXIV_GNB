@@ -25,6 +25,7 @@ image/                   角色美术源文件暂存
 - **续剑 (Continuation)**：打出【续剑】后获得 `ContinuationPower`（隐藏标记，无独立图标）。此后每张会消耗晶壤的卡牌在自己的 `OnPlay` 里各自检查 `HasPower<ContinuationPower>()`，额外生成一张对应的续剑token。没有统一的全局钩子，每条连击链自己维护映射关系。续剑本身在拥有后会从奖励池/商店池自动排除（不会抽到第二张）。
 - **动态数值染色**：本地化文本里数值占位符必须写成 `{VarName:diff()}`（注意括号），才会在力量/易伤等加成生效时变绿、减益时变红。裸的 `{VarName}` 只会显示静态白色数字。
 - **卡牌池稀有度规则**：奖励/商店的稀有度摇点只在 Common/Uncommon/Rare 之间循环，Basic 和 Token 永远不会作为奖励出现。这意味着卡池必须始终保有一定数量的 Common 及以上卡牌，否则奖励结算会抛异常卡死。
+- **商店额外要求按类型（Attack/Skill/Power）也要有余量**：商店固定会摇一张"Power类型"卡牌上架，如果卡池里唯一的Power卡（续剑）已经被玩家拿到（因而从商店池自我排除），卡池里就会变成"0张可上架的Power卡"，商店进入时会直接抛异常导致黑屏卡死（即使重新读档也一样，因为存档本身停在商店房间，每次读档都会重新触发）。2026-08-05 通过新增第二张Power卡（王室亲卫）修复。以后每新增一张会自我排除的"唯一卡"，都要检查其所属`CardType`在池子里是否还有其他候选。
 - **AfterCloned() 而非 AfterCreated()**：凡是需要用 `this.SecondaryCosts().Set(...)` 声明副资源费用的卡牌，必须在 `AfterCloned()`（而不是 `AfterCreated()`）里设置——因为费用数据挂在按实例引用寻址的附加状态表上，而战斗内的卡牌实例是通过克隆产生的，只有 `AfterCloned()` 保证每次克隆都会重新执行。这是 2026-08-05 修复的一个严重bug（爆发打击/倍攻等卡曾经可以在没有晶壤时被免费打出）。
 
 ## 卡牌实装进度
@@ -101,7 +102,7 @@ image/                   角色美术源文件暂存
 ### 减伤/生存
 | Key | 名称 | 状态 |
 |---|---|---|
-| RoyalGuard | 王室亲卫 | ⬜ 未实装（需要"被攻击时敌人掉力量"反应式钩子） |
+| RoyalGuard | 王室亲卫 | ✅ Uncommon，被攻击时反击敌人力量 |
 | Rampart | 铁壁 | ✅ Uncommon |
 | Nebula | 星云 | ⬜ 未实装 |
 | HeartOfLight | 光之心 | ⬜ 未实装 |
@@ -117,7 +118,7 @@ EnergyRelease、RapidReload、EmptyMag、Trigger、Overcharge、SoulOfAzure、
 MagazineExpansion、Roulette、EtherConversion、IntegratedImpact、SuppressingFire、
 CasingRecovery、TacticalReload、FullMagazine
 
-**统计**：表格总计 55 张卡（不含草稿区 14 张），已实装 32 张，未实装 9 张（Finisher链4张 + BlastingZone + RoyalGuard + Nebula + HeartOfLight + Camouflage + Superbolide）。
+**统计**：表格总计 55 张卡（不含草稿区 14 张），已实装 33 张，未实装 8 张（Finisher链4张 + BlastingZone + Nebula + HeartOfLight + Camouflage + Superbolide）。
 
 ## 遗物 / 药水
 

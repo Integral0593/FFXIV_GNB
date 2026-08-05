@@ -4,5 +4,7 @@
   "GUNBREAKER_MOD_POWER_CONTINUATION_POWER.title": "Continuation",
   "GUNBREAKER_MOD_POWER_CONTINUATION_POWER.description": "Whenever Cartridge is spent, generates its matching follow-up card in hand.",
   "GUNBREAKER_MOD_POWER_HEART_OF_STONE_STRENGTH_DOWN_POWER.title": "Heart of Stone",
-  "GUNBREAKER_MOD_POWER_HEART_OF_STONE_STRENGTH_DOWN_POWER.description": "Strength that will be restored at the end of this turn."
+  "GUNBREAKER_MOD_POWER_HEART_OF_STONE_STRENGTH_DOWN_POWER.description": "Strength that will be restored at the end of this turn.",
+  "GUNBREAKER_MOD_POWER_ROYAL_GUARD_POWER.title": "Royal Guard",
+  "GUNBREAKER_MOD_POWER_ROYAL_GUARD_POWER.description": "Attackers lose Strength whenever they attack you."
 }

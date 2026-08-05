@@ -67,5 +67,8 @@
   "GUNBREAKER_MOD_CARD_FATED_BRAND.title": "命运之印",
   "GUNBREAKER_MOD_CARD_FATED_BRAND.description": "对所有敌人造成{Damage:diff()}点伤害。",
   "GUNBREAKER_MOD_CARD_TRAJECTORY.title": "弹道",
-  "GUNBREAKER_MOD_CARD_TRAJECTORY.description": "抽{Draw:diff()}张牌。"
+  "GUNBREAKER_MOD_CARD_TRAJECTORY.description": "抽{Draw:diff()}张牌。",
+
+  "GUNBREAKER_MOD_CARD_ROYAL_GUARD.title": "王室亲卫",
+  "GUNBREAKER_MOD_CARD_ROYAL_GUARD.description": "每当敌人攻击你时，该敌人失去{Strength:diff()}点力量。"
 }
