@@ -3,6 +3,7 @@ using GunbreakerMod.GunbreakerModCode.Resources;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Combat.SecondaryResources;
@@ -25,6 +26,8 @@ public sealed class GnashingFang() : ModCardTemplate(0, CardType.Attack, CardRar
     };
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(8m, ValueProp.Move)];
+
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<SavageClaw>()];
 
     // AfterCloned(), not AfterCreated() - see BurstStrike.cs for why.
     protected override void AfterCloned()

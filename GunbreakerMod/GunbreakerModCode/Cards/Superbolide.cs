@@ -13,8 +13,10 @@ namespace GunbreakerMod.GunbreakerModCode.Cards;
 
 // 超火流星 Superbolide - lose half current HP, take no damage this turn. HP loss is applied BEFORE
 // the immunity power (order matters: the immunity would otherwise block this card's own HP cost
-// too, since Buffer intercepts all HP loss, not just attack damage). Uses ValueProp.Unblockable
-// (the "HP loss like Poison" flag) so it isn't affected by Block.
+// too, since SuperbolideImmunityPower intercepts all HP loss unconditionally, not just attack
+// damage - see that class for why it's an unconditional damage cap, not a depleting Buffer
+// stack). Uses ValueProp.Unblockable (the "HP loss like Poison" flag) so it isn't affected by
+// Block.
 [RegisterCard(typeof(GunbreakerCardPool))]
 public sealed class Superbolide() : ModCardTemplate(0, CardType.Skill, CardRarity.Rare, TargetType.Self)
 {

@@ -5,9 +5,9 @@
   "GUNBREAKER_MOD_CARD_DEFEND_GNB.description": "Gain {Block:diff()} Block.",
 
   "GUNBREAKER_MOD_CARD_KEEN_EDGE.title": "Keen Edge",
-  "GUNBREAKER_MOD_CARD_KEEN_EDGE.description": "Deal {Damage:diff()} damage. Generate a Brutal Shell in your hand.",
+  "GUNBREAKER_MOD_CARD_KEEN_EDGE.description": "Deal {Damage:diff()} damage. Generate a [green]Brutal Shell[/green] in your hand.",
   "GUNBREAKER_MOD_CARD_BRUTAL_SHELL.title": "Brutal Shell",
-  "GUNBREAKER_MOD_CARD_BRUTAL_SHELL.description": "Deal {Damage:diff()} damage. Gain {Block:diff()} Block. Generate a Solid Barrel in your hand.",
+  "GUNBREAKER_MOD_CARD_BRUTAL_SHELL.description": "Deal {Damage:diff()} damage. Gain {Block:diff()} Block. Generate a [green]Solid Barrel[/green] in your hand.",
   "GUNBREAKER_MOD_CARD_SOLID_BARREL.title": "Solid Barrel",
   "GUNBREAKER_MOD_CARD_SOLID_BARREL.description": "Deal {Damage:diff()} damage. Gain {EnergyGain:diff()} Energy. Gain 1 Cartridge.",
 
@@ -22,7 +22,7 @@
   "GUNBREAKER_MOD_CARD_HYPERVELOCITY.description": "Deal {Damage:diff()} damage.",
 
   "GUNBREAKER_MOD_CARD_DEMON_SLICE.title": "Demon Slice",
-  "GUNBREAKER_MOD_CARD_DEMON_SLICE.description": "Deal {Damage:diff()} damage to ALL enemies. Generate a Demon Slaughter in your hand.",
+  "GUNBREAKER_MOD_CARD_DEMON_SLICE.description": "Deal {Damage:diff()} damage to ALL enemies. Generate a [green]Demon Slaughter[/green] in your hand.",
   "GUNBREAKER_MOD_CARD_DEMON_SLAUGHTER.title": "Demon Slaughter",
   "GUNBREAKER_MOD_CARD_DEMON_SLAUGHTER.description": "Deal {Damage:diff()} damage to ALL enemies. Gain 1 Cartridge.",
   "GUNBREAKER_MOD_CARD_BLOODFEST.title": "Bloodfest",
@@ -50,9 +50,9 @@
   "GUNBREAKER_MOD_CARD_HEART_OF_CORUNDUM.description": "Gain {Block:diff()} Block. Gain 1 Cartridge. All enemies lose {Strength:diff()} Strength this turn.",
 
   "GUNBREAKER_MOD_CARD_GNASHING_FANG.title": "Gnashing Fang",
-  "GUNBREAKER_MOD_CARD_GNASHING_FANG.description": "Costs 1 Cartridge. Deal {Damage:diff()} damage. Generate a Savage Claw in your hand.",
+  "GUNBREAKER_MOD_CARD_GNASHING_FANG.description": "Costs 1 Cartridge. Deal {Damage:diff()} damage. Generate a [green]Savage Claw[/green] in your hand.",
   "GUNBREAKER_MOD_CARD_SAVAGE_CLAW.title": "Savage Claw",
-  "GUNBREAKER_MOD_CARD_SAVAGE_CLAW.description": "Deal {Damage:diff()} damage. Generate a Wicked Talon in your hand.",
+  "GUNBREAKER_MOD_CARD_SAVAGE_CLAW.description": "Deal {Damage:diff()} damage. Generate a [green]Wicked Talon[/green] in your hand.",
   "GUNBREAKER_MOD_CARD_WICKED_TALON.title": "Wicked Talon",
   "GUNBREAKER_MOD_CARD_WICKED_TALON.description": "Deal {Damage:diff()} damage.",
   "GUNBREAKER_MOD_CARD_JUGULAR_RIP.title": "Jugular Rip",
@@ -73,11 +73,11 @@
   "GUNBREAKER_MOD_CARD_ROYAL_GUARD.description": "Whenever an enemy attacks you, it loses {Strength:diff()} Strength for its next turn.",
 
   "GUNBREAKER_MOD_CARD_TERMINAL_TRIGGER.title": "Terminal Trigger",
-  "GUNBREAKER_MOD_CARD_TERMINAL_TRIGGER.description": "Gain {CartridgeGain:diff()} Cartridges. Put a Reign of Beasts on top of your draw pile.",
+  "GUNBREAKER_MOD_CARD_TERMINAL_TRIGGER.description": "Gain {CartridgeGain:diff()} Cartridges. Put a [green]Reign of Beasts[/green] on top of your draw pile.",
   "GUNBREAKER_MOD_CARD_REIGN_OF_BEASTS.title": "Reign of Beasts",
-  "GUNBREAKER_MOD_CARD_REIGN_OF_BEASTS.description": "Deal {DamageMain:diff()} damage to target enemy and {DamageSplash:diff()} damage to the rest. Put a Noble Blood on top of your draw pile.",
+  "GUNBREAKER_MOD_CARD_REIGN_OF_BEASTS.description": "Deal {DamageMain:diff()} damage to target enemy and {DamageSplash:diff()} damage to the rest. Put a [green]Noble Blood[/green] on top of your draw pile.",
   "GUNBREAKER_MOD_CARD_NOBLE_BLOOD.title": "Noble Blood",
-  "GUNBREAKER_MOD_CARD_NOBLE_BLOOD.description": "Deal {DamageMain:diff()} damage to target enemy and {DamageSplash:diff()} damage to the rest. Put a Lion Heart on top of your draw pile.",
+  "GUNBREAKER_MOD_CARD_NOBLE_BLOOD.description": "Deal {DamageMain:diff()} damage to target enemy and {DamageSplash:diff()} damage to the rest. Put a [green]Lion Heart[/green] on top of your draw pile.",
   "GUNBREAKER_MOD_CARD_LION_HEART.title": "Lion Heart",
   "GUNBREAKER_MOD_CARD_LION_HEART.description": "Deal {DamageMain:diff()} damage to target enemy and {DamageSplash:diff()} damage to the rest.",
 
@@ -94,7 +94,7 @@
   "GUNBREAKER_MOD_CARD_HEART_OF_LIGHT.title": "Heart of Light",
   "GUNBREAKER_MOD_CARD_HEART_OF_LIGHT.description": "Apply {WeakPower:diff()} Weak to ALL enemies. Gain {BlockNextTurn:diff()} Block next turn.",
   "GUNBREAKER_MOD_CARD_SUPERBOLIDE.title": "Superbolide",
-  "GUNBREAKER_MOD_CARD_SUPERBOLIDE.description": "Lose {HPLossPercent:diff()}% of your current HP. Take no damage this turn.",
+  "GUNBREAKER_MOD_CARD_SUPERBOLIDE.description": "Costs 2 Cartridge. Lose {HPLossPercent:diff()}% of your current HP. Take no damage this turn.",
   "GUNBREAKER_MOD_CARD_SOUL_OF_AZURE.title": "Soul of Azure",
   "GUNBREAKER_MOD_CARD_SOUL_OF_AZURE.description": "At the start of your turn, gain {Buffer:diff()} Buffer and 1 Cartridge."
 }

@@ -1,6 +1,7 @@
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using GunbreakerMod.GunbreakerModCode.Resources;
 using STS2RitsuLib.Combat.SecondaryResources;
@@ -25,6 +26,8 @@ public sealed class TerminalTrigger() : ModCardTemplate(2, CardType.Skill, CardR
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("CartridgeGain", 2m)];
 
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<ReignOfBeasts>()];
+
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         await SecondaryResourceCmd.Gain(Owner, CartridgeResource.Id, (int)DynamicVars["CartridgeGain"].BaseValue, source: this);
@@ -34,13 +37,10 @@ public sealed class TerminalTrigger() : ModCardTemplate(2, CardType.Skill, CardR
         {
             CardCmd.Upgrade(reignOfBeasts);
         }
-        // Generate into Hand first so the player actually sees the card, then wait a beat so it's
-        // actually perceived before moving to the top of the draw pile - the fly-into-hand tween
-        // finishing doesn't leave much dwell time on its own (see ReignOfBeasts.cs for why moving
-        // straight into Draw with no prior pile shows nothing at all).
-        await CardPileCmd.AddGeneratedCardToCombat(reignOfBeasts, PileType.Hand, Owner);
-        await Cmd.Wait(0.75f);
-        await CardPileCmd.Add(reignOfBeasts, PileType.Draw, CardPilePosition.Top);
+        // See ReignOfBeasts.cs for why this generates straight to Draw-top + PreviewCardPileAdd
+        // instead of routing through Hand first.
+        var result = await CardPileCmd.AddGeneratedCardToCombat(reignOfBeasts, PileType.Draw, Owner, CardPilePosition.Top);
+        CardCmd.PreviewCardPileAdd(result);
     }
 
     protected override void OnUpgrade()

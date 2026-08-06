@@ -2,6 +2,7 @@ using System.Linq;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Combat.CardTargeting;
@@ -24,6 +25,8 @@ public sealed class NobleBlood() : ModCardTemplate(2, CardType.Attack, CardRarit
     protected override IEnumerable<DynamicVar> CanonicalVars =>
         [new DamageVar("DamageMain", 35m, ValueProp.Move), new DamageVar("DamageSplash", 7m, ValueProp.Move)];
 
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<LionHeart>()];
+
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         ArgumentNullException.ThrowIfNull(cardPlay.Target);
@@ -45,10 +48,10 @@ public sealed class NobleBlood() : ModCardTemplate(2, CardType.Attack, CardRarit
         {
             CardCmd.Upgrade(lionHeart);
         }
-        // See ReignOfBeasts.cs for why this goes through Hand before moving to the draw-pile top.
-        await CardPileCmd.AddGeneratedCardToCombat(lionHeart, PileType.Hand, Owner);
-        await Cmd.Wait(0.75f);
-        await CardPileCmd.Add(lionHeart, PileType.Draw, CardPilePosition.Top);
+        // See ReignOfBeasts.cs for why this generates straight to Draw-top + PreviewCardPileAdd
+        // instead of routing through Hand first.
+        var result = await CardPileCmd.AddGeneratedCardToCombat(lionHeart, PileType.Draw, Owner, CardPilePosition.Top);
+        CardCmd.PreviewCardPileAdd(result);
     }
 
     protected override void OnUpgrade()

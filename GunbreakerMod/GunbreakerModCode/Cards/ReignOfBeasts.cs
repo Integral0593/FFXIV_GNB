@@ -2,6 +2,7 @@ using System.Linq;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Combat.CardTargeting;
@@ -24,6 +25,10 @@ public sealed class ReignOfBeasts() : ModCardTemplate(2, CardType.Attack, CardRa
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
         [new DamageVar("DamageMain", 25m, ValueProp.Move), new DamageVar("DamageSplash", 5m, ValueProp.Move)];
+
+    // Matches vanilla's own convention (BladeDance -> Shiv, etc.): hovering this card shows a
+    // preview of the token it generates.
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<NobleBlood>()];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
@@ -54,17 +59,17 @@ public sealed class ReignOfBeasts() : ModCardTemplate(2, CardType.Attack, CardRa
         {
             CardCmd.Upgrade(nobleBlood);
         }
-        // Generate into Hand first (shows the normal "fly into hand" reveal, same as the other
-        // combo chains) then move it to the top of the draw pile - a card materializing directly
-        // into Draw with no prior pile gets no visual treatment at all (confirmed by decompiling
-        // CardPileCmd's tween-selection logic: it only animates pile changes that either start or
-        // end in Hand/Play, or move between two already-invisible piles like Draw/Discard/Exhaust -
-        // a brand new card with no old pile matches neither case). Per user request: show the
-        // generated card before it lands on the deck, mirroring how Regent's DecisionsDecisions
-        // moves cards from hand to the top of the draw pile.
-        await CardPileCmd.AddGeneratedCardToCombat(nobleBlood, PileType.Hand, Owner);
-        await Cmd.Wait(0.75f);
-        await CardPileCmd.Add(nobleBlood, PileType.Draw, CardPilePosition.Top);
+        // Generate straight into the top of the draw pile in one step, then pop the dedicated
+        // floating card-preview popup (CardCmd.PreviewCardPileAdd) instead of routing through Hand
+        // first. Decompiling vanilla's own generator cards (Turbo -> Void, Overclock -> Burn,
+        // GunkUp -> Slimed, FightThrough -> Wound, BoostAway -> Dazed) shows this exact pattern -
+        // AddGeneratedCardToCombat straight to the destination pile, wrapped in
+        // CardCmd.PreviewCardPileAdd for the visual - none of them stage through Hand first.
+        // (An earlier "generate into Hand, then move to Draw top" attempt was a guess at a
+        // DecisionsDecisions precedent that turned out, on actually decompiling that card, to not
+        // do anything of the sort - it doesn't move cards to the draw pile at all.)
+        var result = await CardPileCmd.AddGeneratedCardToCombat(nobleBlood, PileType.Draw, Owner, CardPilePosition.Top);
+        CardCmd.PreviewCardPileAdd(result);
     }
 
     protected override void OnUpgrade()

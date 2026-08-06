@@ -10,6 +10,13 @@ public sealed class GunbreakerCardPool : TypeListCardPoolModel
     // Placeholder: reuses Defect's built-in energy icon until custom Gunbreaker art ships.
     public override string EnergyColorName => "defect";
 
+    // The persistent energy-orb background shown during combat. TypeListCardPoolModel already
+    // implements IModBigEnergyIconPool with a virtual null default - just override it, no need
+    // to re-declare the interface. This only overrides the large background icon
+    // (EnergyIconHelper.GetPath) - the small per-card cost badge still comes from EnergyColorName
+    // above until we have art for that too.
+    public override string? BigEnergyIconPath => "res://GunbreakerMod/images/energy.png";
+
     // Fallback if PoolFrameMaterial below can't be resolved for some reason.
     public override string CardFrameMaterialPath => "card_frame_blue";
 

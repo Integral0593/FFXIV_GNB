@@ -30,6 +30,6 @@ public sealed class BlastingZone() : ModCardTemplate(2, CardType.Attack, CardRar
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Damage.UpgradeValueBy(4m);
+        DynamicVars.Damage.UpgradeValueBy(10m);
     }
 }

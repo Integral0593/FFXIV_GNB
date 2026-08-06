@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Content;
 
 namespace GunbreakerMod.GunbreakerModCode.Powers;
 
@@ -14,13 +15,17 @@ namespace GunbreakerMod.GunbreakerModCode.Powers;
 // turn, not a configurable number of turns, so this reimplements its "internally apply
 // StrengthPower, revert on removal" pattern with our own turn counter.
 [RegisterPower]
-public sealed class NoMercyPower : PowerModel
+public sealed class NoMercyPower : ModPowerTemplate
 {
     private int _turnsRemaining = 2;
 
     public override PowerType Type => PowerType.Buff;
 
     public override PowerStackType StackType => PowerStackType.Counter;
+
+    public override PowerAssetProfile AssetProfile => new(
+        IconPath: "res://GunbreakerMod/images/powers/no_mercy_power.png",
+        BigIconPath: "res://GunbreakerMod/images/powers/no_mercy_power_big.png");
 
     public override async Task BeforeApplied(Creature target, decimal amount, Creature? applier, CardModel? cardSource)
     {

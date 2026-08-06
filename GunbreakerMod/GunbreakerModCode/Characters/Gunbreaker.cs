@@ -3,6 +3,8 @@ using GunbreakerMod.GunbreakerModCode.Cards;
 using MegaCrit.Sts2.Core.Entities.Characters;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Characters;
+using STS2RitsuLib.Scaffolding.Characters.Visuals.Definition;
+using STS2RitsuLib.Scaffolding.Visuals.Definition;
 
 namespace GunbreakerMod.GunbreakerModCode.Characters;
 
@@ -13,13 +15,28 @@ namespace GunbreakerMod.GunbreakerModCode.Characters;
 // auto-wraps a Texture2D into a valid NCreatureVisuals via RitsuGodotNodeFactories -
 // same for the Ui paths above, which all accept a PackedScene OR a Texture2D).
 //
-// EnergyCounterPath / MerchantAnimPath / RestSiteAnimPath / Spine / trail vfx / sfx are
-// deliberately left unset (falling back to Ironclad via PlaceholderCharacterId): their
-// runtime factory patches (e.g. CharacterEnergyCounterRuntimeFactoryPatch) only accept a
-// real PackedScene - pointing them at a placeholder PNG would fail ResolveScene() and fall
-// through to the game's own direct-instantiate path, which is what crashed for Squall's
-// broken character-select scene earlier. Revisit once we either have real art or invest in
-// building actual placeholder .tscn scenes for these.
+// EnergyCounterPath / Spine / trail vfx / sfx are still deliberately left unset (falling back
+// to Ironclad via PlaceholderCharacterId). EnergyCounterPath genuinely needs a real .tscn
+// (RitsuNEnergyCounterNodeFactory.CreateBareFromResourceImpl explicitly throws
+// NotSupportedException for a plain texture, confirmed via decompile - unlike VisualsPath/
+// Merchant/RestSite, no texture-only path exists here). A hand-written .tscn was tried and even
+// compiled fine, but this project's build pipeline packs mod assets with a lightweight custom
+// packer (BSchneppe.StS2.PckPacker) rather than a real Godot editor export, and that packer
+// flatly refuses any .tscn: `dotnet build` prints "PCK packing skipped - unsupported files
+// detected: energy_counter.tscn" and, worse, skips packing EVERYTHING else in the same build
+// when it hits one. Reverted rather than leave that in the tree. Doing this for real would need
+// the actual Godot editor to export the mod instead of this project's normal dotnet-build flow -
+// a bigger workflow change than just adding art, so flagging it rather than deciding
+// unilaterally.
+//
+// Merchant/rest-site DON'T need a real .tscn though - RitsuLib's WorldProceduralVisuals lets a
+// mod supply plain static textures per named "cue" instead of an animated scene
+// (CharacterWorldProceduralVisualSetBuilder -> VisualCueSet, confirmed via decompile). The cue
+// keys aren't arbitrary: "relaxed_loop" is the literal animation name NMerchantCharacter plays
+// for its idle state, and "overgrowth_loop"/"hive_loop"/"glory_loop" are the base game's
+// per-Act rest-site loop names (RitsuLib's own doc comment on CharacterRestSiteWorldDefinition
+// lists them) - mapping all three to the same static image just means our rest pose looks the
+// same in every Act instead of changing.
 //
 // RequiresEpochAndTimeline is intentionally left at its default (true) - NOT overridden to
 // false. That was the actual root cause of the "always ends up as Ironclad" bug: the game
@@ -60,6 +77,23 @@ public sealed class Gunbreaker : ModCharacterTemplate<GunbreakerCardPool, Gunbre
             // Real character art (no animation rig yet, per user - static image is fine for now).
             VisualsPath = "res://GunbreakerMod/images/gunbreaker_char.png",
         },
+        // Merchant art was rendering small and too low with no style override at all (user
+        // screenshot), so it's not just a matter of resizing the source texture - the node this
+        // plugs into applies some default placement of its own. Re-exported the source art bigger
+        // (500x697, versus the 287x400 used for combat/merchant last round - that smaller size
+        // was specifically to dodge the combat hitbox-sync crash, which doesn't apply to the
+        // merchant room) and nudged it up with an Offset. This is a first-pass guess, not a
+        // decompiled-exact value - needs an in-game screenshot to dial in.
+        WorldProceduralVisuals = CharacterWorldProceduralVisualSetBuilder.Create()
+            .Merchant(cues => cues.Single(
+                "relaxed_loop",
+                "res://GunbreakerMod/images/gunbreaker_merchant.png",
+                VisualNodeStyle.Create(offset: new Vector2(0f, -160f))))
+            .RestSite(cues => cues
+                .Single("overgrowth_loop", "res://GunbreakerMod/images/gunbreaker_rest.png")
+                .Single("hive_loop", "res://GunbreakerMod/images/gunbreaker_rest.png")
+                .Single("glory_loop", "res://GunbreakerMod/images/gunbreaker_rest.png"))
+            .Build(),
     };
 
     public override CharacterGender Gender => CharacterGender.Neutral;
