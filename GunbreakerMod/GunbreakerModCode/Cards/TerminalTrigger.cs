@@ -1,23 +1,24 @@
-using GunbreakerMod.GunbreakerModCode.Resources;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using GunbreakerMod.GunbreakerModCode.Resources;
 using STS2RitsuLib.Combat.SecondaryResources;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
 namespace GunbreakerMod.GunbreakerModCode.Cards;
 
-// 终结技 Finisher - opens the Reign of Beasts / Noble Blood / Lion Heart chain. Gains Cartridge and
-// puts Reign of Beasts on top of the draw pile - confirmed with the user this chain is strictly
-// sequential (play one, the next lands on top of the draw pile), not a 3-choice branch.
+// 终结击 Terminal Trigger (renamed from Finisher per the design table) - opens the Reign of Beasts /
+// Noble Blood / Lion Heart chain. Gains Cartridge and puts Reign of Beasts on top of the draw pile -
+// confirmed with the user this chain is strictly sequential (play one, the next lands on top of the
+// draw pile), not a 3-choice branch.
 [RegisterCard(typeof(GunbreakerCardPool))]
-public sealed class Finisher() : ModCardTemplate(2, CardType.Skill, CardRarity.Rare, TargetType.Self)
+public sealed class TerminalTrigger() : ModCardTemplate(2, CardType.Skill, CardRarity.Rare, TargetType.Self)
 {
     public override CardAssetProfile AssetProfile => new()
     {
-        PortraitPath = "res://GunbreakerMod/images/card_portraits/finisher.png",
+        PortraitPath = "res://GunbreakerMod/images/card_portraits/terminal_trigger.png",
     };
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
@@ -33,10 +34,12 @@ public sealed class Finisher() : ModCardTemplate(2, CardType.Skill, CardRarity.R
         {
             CardCmd.Upgrade(reignOfBeasts);
         }
-        // Generate into Hand first so the player actually sees the card (see ReignOfBeasts.cs for
-        // why a card materializing directly into Draw gets no visual treatment at all), then move
-        // it to the top of the draw pile.
+        // Generate into Hand first so the player actually sees the card, then wait a beat so it's
+        // actually perceived before moving to the top of the draw pile - the fly-into-hand tween
+        // finishing doesn't leave much dwell time on its own (see ReignOfBeasts.cs for why moving
+        // straight into Draw with no prior pile shows nothing at all).
         await CardPileCmd.AddGeneratedCardToCombat(reignOfBeasts, PileType.Hand, Owner);
+        await Cmd.Wait(0.75f);
         await CardPileCmd.Add(reignOfBeasts, PileType.Draw, CardPilePosition.Top);
     }
 

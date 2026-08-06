@@ -72,12 +72,29 @@
   "GUNBREAKER_MOD_CARD_ROYAL_GUARD.title": "王室亲卫",
   "GUNBREAKER_MOD_CARD_ROYAL_GUARD.description": "每当敌人攻击你时，该敌人在下回合失去{Strength:diff()}点力量。",
 
-  "GUNBREAKER_MOD_CARD_FINISHER.title": "终结技",
-  "GUNBREAKER_MOD_CARD_FINISHER.description": "获得{CartridgeGain:diff()}档晶壤，在抽牌堆顶部放入一张【崛起之心】。",
+  "GUNBREAKER_MOD_CARD_TERMINAL_TRIGGER.title": "终结击",
+  "GUNBREAKER_MOD_CARD_TERMINAL_TRIGGER.description": "获得{CartridgeGain:diff()}档晶壤，在抽牌堆顶部放入一张【崛起之心】。",
   "GUNBREAKER_MOD_CARD_REIGN_OF_BEASTS.title": "崛起之心",
   "GUNBREAKER_MOD_CARD_REIGN_OF_BEASTS.description": "对指定敌人造成{DamageMain:diff()}点伤害，对其他敌人造成{DamageSplash:diff()}点伤害，在抽牌堆顶部放入一张【支配之心】。",
   "GUNBREAKER_MOD_CARD_NOBLE_BLOOD.title": "支配之心",
   "GUNBREAKER_MOD_CARD_NOBLE_BLOOD.description": "对指定敌人造成{DamageMain:diff()}点伤害，对其他敌人造成{DamageSplash:diff()}点伤害，在抽牌堆顶部放入一张【终结之心】。",
   "GUNBREAKER_MOD_CARD_LION_HEART.title": "终结之心",
-  "GUNBREAKER_MOD_CARD_LION_HEART.description": "对指定敌人造成{DamageMain:diff()}点伤害，对其他敌人造成{DamageSplash:diff()}点伤害。"
+  "GUNBREAKER_MOD_CARD_LION_HEART.description": "对指定敌人造成{DamageMain:diff()}点伤害，对其他敌人造成{DamageSplash:diff()}点伤害。",
+
+  "GUNBREAKER_MOD_CARD_BLASTING_ZONE.title": "爆破领域",
+  "GUNBREAKER_MOD_CARD_BLASTING_ZONE.description": "造成{Damage:diff()}点伤害。",
+  "GUNBREAKER_MOD_CARD_REPRISAL.title": "雪仇",
+  "GUNBREAKER_MOD_CARD_REPRISAL.description": "给予所有敌人{WeakPower:diff()}层虚弱。",
+  "GUNBREAKER_MOD_CARD_ARMS_LENGTH.title": "亲疏自行",
+  "GUNBREAKER_MOD_CARD_ARMS_LENGTH.description": "获得{ArtifactPower:diff()}层人工制品。",
+  "GUNBREAKER_MOD_CARD_NEBULA.title": "星云",
+  "GUNBREAKER_MOD_CARD_NEBULA.description": "获得{Block:diff()}点格挡，给予所有敌人{WeakPower:diff()}层虚弱。",
+  "GUNBREAKER_MOD_CARD_CAMOUFLAGE.title": "伪装",
+  "GUNBREAKER_MOD_CARD_CAMOUFLAGE.description": "获得{Block:diff()}点格挡，将本回合所有阻挡的伤害反弹给敌人。",
+  "GUNBREAKER_MOD_CARD_HEART_OF_LIGHT.title": "光之心",
+  "GUNBREAKER_MOD_CARD_HEART_OF_LIGHT.description": "给予所有敌人{WeakPower:diff()}层虚弱，下回合获得{BlockNextTurn:diff()}点格挡。",
+  "GUNBREAKER_MOD_CARD_SUPERBOLIDE.title": "超火流星",
+  "GUNBREAKER_MOD_CARD_SUPERBOLIDE.description": "扣除当前生命值的{HPLossPercent:diff()}%，本回合不受到任何伤害。",
+  "GUNBREAKER_MOD_CARD_SOUL_OF_AZURE.title": "灵魂之青",
+  "GUNBREAKER_MOD_CARD_SOUL_OF_AZURE.description": "在每回合开始时获得{Buffer:diff()}层缓冲、1档晶壤。"
 }

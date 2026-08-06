@@ -38,7 +38,12 @@ public sealed class ReignOfBeasts() : ModCardTemplate(2, CardType.Attack, CardRa
         // user). TargetingFiltered runs the whole splash hit as a single AttackCommand against an
         // explicit target list instead, which is the pattern RitsuLib provides for exactly this
         // "primary target + everyone else" shape.
-        var splashTargets = CombatState.GetOpponentsOf(Owner.Creature).Where(enemy => enemy != cardPlay.Target);
+        // .ToList() materializes the query eagerly - CombatState.GetOpponentsOf returns a live
+        // collection, and if splash damage kills one of the splash targets mid-resolution, a lazy
+        // .Where() re-enumerating that same live collection throws "Collection was modified" and
+        // aborts the rest of OnPlay (this was silently killing card generation below - confirmed
+        // via godot.log stack trace pointing into this method's enumeration).
+        var splashTargets = CombatState.GetOpponentsOf(Owner.Creature).Where(enemy => enemy != cardPlay.Target).ToList();
         await DamageCmd.Attack(DynamicVars["DamageSplash"].BaseValue)
             .FromCard(this, cardPlay)
             .TargetingFiltered(splashTargets)
@@ -58,6 +63,7 @@ public sealed class ReignOfBeasts() : ModCardTemplate(2, CardType.Attack, CardRa
         // generated card before it lands on the deck, mirroring how Regent's DecisionsDecisions
         // moves cards from hand to the top of the draw pile.
         await CardPileCmd.AddGeneratedCardToCombat(nobleBlood, PileType.Hand, Owner);
+        await Cmd.Wait(0.75f);
         await CardPileCmd.Add(nobleBlood, PileType.Draw, CardPilePosition.Top);
     }
 

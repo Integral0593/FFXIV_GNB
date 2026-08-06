@@ -1,8 +1,10 @@
 using System.Reflection;
 using Godot;
 using GunbreakerMod.GunbreakerModCode.Resources;
+using GunbreakerMod.GunbreakerModCode.Vfx;
 using MegaCrit.Sts2.Core.Modding;
 using STS2RitsuLib;
+using STS2RitsuLib.Cards;
 using STS2RitsuLib.Interop;
 
 namespace GunbreakerMod.GunbreakerModCode;
@@ -23,5 +25,7 @@ public partial class MainFile : Node
         ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
 
         _ = CartridgeResource.Definition; // force secondary-resource registration early
+
+        CardOnPlayHook.RegisterGlobalListener(new AttackLungeListener());
     }
 }

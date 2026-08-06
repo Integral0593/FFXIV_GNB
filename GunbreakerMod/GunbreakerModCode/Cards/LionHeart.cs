@@ -10,7 +10,7 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace GunbreakerMod.GunbreakerModCode.Cards;
 
-// 终结之心 Lion Heart - end of the Finisher chain. No further generation.
+// 终结之心 Lion Heart - end of the Terminal Trigger chain. No further generation.
 [RegisterCard(typeof(GunbreakerCardPool))]
 public sealed class LionHeart() : ModCardTemplate(2, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy)
 {
@@ -32,8 +32,9 @@ public sealed class LionHeart() : ModCardTemplate(2, CardType.Attack, CardRarity
             .Targeting(cardPlay.Target)
             .Execute(choiceContext);
 
-        // See ReignOfBeasts.cs for why this uses TargetingFiltered instead of a manual loop.
-        var splashTargets = CombatState.GetOpponentsOf(Owner.Creature).Where(enemy => enemy != cardPlay.Target);
+        // See ReignOfBeasts.cs for why this uses TargetingFiltered (instead of a manual loop) and
+        // .ToList() (instead of a lazy .Where() over a live, mutating collection).
+        var splashTargets = CombatState.GetOpponentsOf(Owner.Creature).Where(enemy => enemy != cardPlay.Target).ToList();
         await DamageCmd.Attack(DynamicVars["DamageSplash"].BaseValue)
             .FromCard(this, cardPlay)
             .TargetingFiltered(splashTargets)

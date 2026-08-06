@@ -30,7 +30,8 @@ image/                   角色美术源文件暂存
 
 - **晶壤 (Cartridge)**：独立于能量的副资源，上限 3，战斗内不清空、跨战斗重置。战斗界面用 3 个菱形图标显示（未点亮=灰，点亮=蓝，带白色描边），位置固定在能量球正上方（见 `Resources/CartridgeResource.cs`）。
 - **续剑 (Continuation)**：打出【续剑】后获得 `ContinuationPower`（隐藏标记，无独立图标）。此后每张会消耗晶壤的卡牌在自己的 `OnPlay` 里各自检查 `HasPower<ContinuationPower>()`，额外生成一张对应的续剑token。没有统一的全局钩子，每条连击链自己维护映射关系。续剑本身在拥有后会从奖励池/商店池自动排除（不会抽到第二张）。
-- **终结技连击**：打出【终结技】后在抽牌堆顶部放入【崛起之心】，打出后再放入【支配之心】，再放入【终结之心】——是严格的顺序链条，不是三选一分支。每张都对主目标造成高伤害、对其余敌人造成溅射伤害。
+- **终结连击**：打出【终结击】（Terminal Trigger）后在抽牌堆顶部放入【崛起之心】，打出后再放入【支配之心】，再放入【终结之心】——是严格的顺序链条，不是三选一分支。每张都对主目标造成高伤害、对其余敌人造成溅射伤害。
+- **攻击牌前冲动作**：角色没有 Spine 骨骼动画（纯静态图），原版 `SetAnimationTrigger("Attack")` 对我们的立绘是空操作。改为在 `Vfx/AttackLungeListener.cs` 里注册一个全局的 `ICardOnPlayHookListener`：任意 Attack 类型的卡被 Gunbreaker 打出时，用一个 Godot `Tween` 让 `NCreature.Visuals`（只包含立绘本体，不含血条/UI）前冲再弹回，不阻塞卡牌本身的伤害结算（tween 不等待完成）。
 
 ## 卡牌实装进度
 
@@ -76,7 +77,7 @@ image/                   角色美术源文件暂存
 |---|---|---|
 | DoubleDown | 倍攻 | ✅ Rare，Exhaust，不接续剑逻辑 |
 | Bloodfest | 血壤 | ✅ Common，纯获得晶壤 |
-| Finisher | 终结技 | ✅ Rare，获得晶壤+在抽牌堆顶部放入崛起之心 |
+| TerminalTrigger | 终结击 | ✅ Rare（原【终结技】Finisher 改名，效果不变），获得晶壤+在抽牌堆顶部放入崛起之心 |
 | ReignOfBeasts | 崛起之心 | ✅ 主目标+溅射，在抽牌堆顶部放入支配之心 |
 | NobleBlood | 支配之心 | ✅ 主目标+溅射，在抽牌堆顶部放入终结之心 |
 | LionHeart | 终结之心 | ✅ 主目标+溅射（链末端） |
@@ -99,7 +100,7 @@ image/                   角色美术源文件暂存
 ### 高伤/DoT转化
 | Key | 名称 | 状态 |
 |---|---|---|
-| BlastingZone | 爆破领域 | ⬜ 未实装 |
+| BlastingZone | 爆破领域 | ✅ Uncommon |
 | SonicBreak | 音速破 | ✅ Common |
 | BowShock | 弓形冲波 | ✅ Common |
 
@@ -108,21 +109,24 @@ image/                   角色美术源文件暂存
 |---|---|---|
 | RoyalGuard | 王室亲卫 | ✅ Uncommon，被攻击时该敌人下回合失去力量（非永久） |
 | Rampart | 铁壁 | ✅ Uncommon |
-| Nebula | 星云 | ⬜ 未实装 |
-| HeartOfLight | 光之心 | ⬜ 未实装 |
-| Camouflage | 伪装 | ⬜ 未实装（需要"格挡伤害反弹"新机制） |
+| Nebula | 星云 | ✅ Rare |
+| HeartOfLight | 光之心 | ✅ Uncommon |
+| Camouflage | 伪装 | ✅ Uncommon，直接复用原版 `ReflectPower`，无需自定义Power |
 | HeartOfStone | 石之心 | ✅ Common |
 | HeartOfCorundum | 刚玉之心 | ✅ Uncommon |
-| Superbolide | 超火流星 | ⬜ 未实装（需要"本回合免疫伤害"机制，待调研对应Power） |
+| Superbolide | 超火流星 | ✅ Rare，消耗2档晶壤，扣当前生命值一定比例，本回合免疫伤害（`SuperbolideImmunityPower` 包一层大额 `BufferPower`） |
 | Aurora | 极光 | ✅ Common |
+| Reprisal | 雪仇 | ✅ Common |
+| ArmsLength | 亲疏自行 | ✅ Common，Exhaust，获得人工制品（Artifact） |
+| SoulOfAzure | 灵魂之青 | ✅ Rare Power，回合开始时获得缓冲（Buffer，逐回合累加）+1档晶壤 |
 
 ### 运转端（能力牌 / 技能攻击牌 / 抽牌）
 表格标记为"草稿"，设计尚未最终确定，全部 📝 暂不实装：
-EnergyRelease、RapidReload、EmptyMag、Trigger、Overcharge、SoulOfAzure、
+EnergyRelease、RapidReload、EmptyMag、Trigger、Overcharge、
 MagazineExpansion、Roulette、EtherConversion、IntegratedImpact、SuppressingFire、
 CasingRecovery、TacticalReload、FullMagazine
 
-**统计**：表格总计 40 张卡（不含草稿区 14 张），已实装 35 张，未实装 5 张：BlastingZone、Nebula、HeartOfLight、Camouflage、Superbolide。
+**统计**：表格总计 43 张确认卡（不含草稿区 13 张），已全部实装。
 
 ## 遗物 / 药水
 
@@ -158,6 +162,7 @@ CasingRecovery、TacticalReload、FullMagazine
 - **晶壤图标"开局不显示"，用 `CallDeferred` 没能真正修好**：一开始以为是 RitsuLib 在"刚注册完挂载节点"后会同步隐藏一次、而战斗开始时的首次刷新可能抢跑在这次隐藏之前完成，所以加了一次性的 `CallDeferred(Show)` 作为补救，但实测仍然不稳定。改为在图标行上挂一个内置的 `Godot.Timer` 节点（每0.2秒触发一次），每次都用 `CombatManager.Instance.DebugOnlyGetState()` + `LocalContext.GetMe(...)` 直接重新取得当前玩家、重新计算是否该显示，不再依赖 RitsuLib 内部那次"结算UI是否注册好了"的时序是否踩对点——这样无论一开始那次刷新有没有生效，最多0.2秒内都会被这个定时器自我纠正回正确状态。
 - **终结技连击的溅射伤害打不到所有其他敌人**：场上3个及以上敌人时，崛起之心/支配之心/终结之心的溅射伤害只会命中一个"其他目标"。原因是用了一个手写循环、对每个敌人分别调用 `.Targeting(单个敌人).Execute(...)`——反编译发现 RitsuLib 其实提供了专门给"主目标+溅射到其余所有敌人"这种形状用的 API：`AttackCommandTargetingExtensions.TargetingFiltered`，把整个溅射伤害当成一次性的单个命令、传入一份过滤好的目标列表执行。换用这个 API 后修复。
 - **终结技连击生成的续卡完全看不到**：崛起之心/支配之心/终结之心被放到抽牌堆顶部时，玩家看不到发生了什么。反编译 `CardPileCmd` 里挑选过场动画的逻辑发现：只有"从手牌/出牌区进/出"或者"在抽牌堆/弃牌堆/消耗堆之间互相移动"这两类换堆才会有对应的过场动画；一张全新生成、此前没有任何"旧堆"的卡直接进抽牌堆，两类都不匹配，所以完全没有任何视觉反馈。改成先生成进手牌（复用其他连击链已经在用、效果正常的"飞入手牌"过场），再立刻把这张卡移动到抽牌堆顶部（这一步换堆能正常触发过场动画）——这个"先进手牌、再移到抽牌堆顶部"的组合打法也是参考了原版储君角色的《决断》（DecisionsDecisions）卡的做法。
+- **（上一条修复后仍反馈看不到）真正的根因：溅射目标查询在攻击结算中途抛异常，整个 `OnPlay` 直接中断**：加了"先进手牌再移到抽牌堆"之后，用户反馈续卡依旧完全不显示。回头翻 `godot.log` 才发现真正原因和过场动画无关，是一个被吞掉的异常——`崛起之心/支配之心/终结之心` 的溅射目标用的是 `CombatState.GetOpponentsOf(...).Where(...)` 这个惰性 LINQ 查询，直接传给 `TargetingFiltered`。如果溅射伤害在结算过程中打死了其中一个溅射目标，`GetOpponentsOf` 返回的是敌人列表的活引用，死亡会实时把该敌人从这个列表里移除，而惰性查询这时候还在枚举同一个列表，于是抛出 `InvalidOperationException: Collection was modified`——这个异常会直接中断整个 `OnPlay` 协程，后面生成续卡的代码根本没机会执行。真正的修复是在传给 `TargetingFiltered` 之前加 `.ToList()` 把目标列表立即固化成一份快照，不再和会变化的活列表绑在一起。之前"先进手牌"的过场动画修复方向没有错（对话手牌路径确实需要那样做），只是没有触及真正的崩溃根因。
 
 ## 待跟进事项
 

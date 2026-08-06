@@ -72,12 +72,29 @@
   "GUNBREAKER_MOD_CARD_ROYAL_GUARD.title": "Royal Guard",
   "GUNBREAKER_MOD_CARD_ROYAL_GUARD.description": "Whenever an enemy attacks you, it loses {Strength:diff()} Strength for its next turn.",
 
-  "GUNBREAKER_MOD_CARD_FINISHER.title": "Finisher",
-  "GUNBREAKER_MOD_CARD_FINISHER.description": "Gain {CartridgeGain:diff()} Cartridges. Put a Reign of Beasts on top of your draw pile.",
+  "GUNBREAKER_MOD_CARD_TERMINAL_TRIGGER.title": "Terminal Trigger",
+  "GUNBREAKER_MOD_CARD_TERMINAL_TRIGGER.description": "Gain {CartridgeGain:diff()} Cartridges. Put a Reign of Beasts on top of your draw pile.",
   "GUNBREAKER_MOD_CARD_REIGN_OF_BEASTS.title": "Reign of Beasts",
   "GUNBREAKER_MOD_CARD_REIGN_OF_BEASTS.description": "Deal {DamageMain:diff()} damage to target enemy and {DamageSplash:diff()} damage to the rest. Put a Noble Blood on top of your draw pile.",
   "GUNBREAKER_MOD_CARD_NOBLE_BLOOD.title": "Noble Blood",
   "GUNBREAKER_MOD_CARD_NOBLE_BLOOD.description": "Deal {DamageMain:diff()} damage to target enemy and {DamageSplash:diff()} damage to the rest. Put a Lion Heart on top of your draw pile.",
   "GUNBREAKER_MOD_CARD_LION_HEART.title": "Lion Heart",
-  "GUNBREAKER_MOD_CARD_LION_HEART.description": "Deal {DamageMain:diff()} damage to target enemy and {DamageSplash:diff()} damage to the rest."
+  "GUNBREAKER_MOD_CARD_LION_HEART.description": "Deal {DamageMain:diff()} damage to target enemy and {DamageSplash:diff()} damage to the rest.",
+
+  "GUNBREAKER_MOD_CARD_BLASTING_ZONE.title": "Blasting Zone",
+  "GUNBREAKER_MOD_CARD_BLASTING_ZONE.description": "Deal {Damage:diff()} damage.",
+  "GUNBREAKER_MOD_CARD_REPRISAL.title": "Reprisal",
+  "GUNBREAKER_MOD_CARD_REPRISAL.description": "Apply {WeakPower:diff()} Weak to ALL enemies.",
+  "GUNBREAKER_MOD_CARD_ARMS_LENGTH.title": "Arm's Length",
+  "GUNBREAKER_MOD_CARD_ARMS_LENGTH.description": "Gain {ArtifactPower:diff()} Artifact.",
+  "GUNBREAKER_MOD_CARD_NEBULA.title": "Nebula",
+  "GUNBREAKER_MOD_CARD_NEBULA.description": "Gain {Block:diff()} Block. Apply {WeakPower:diff()} Weak to ALL enemies.",
+  "GUNBREAKER_MOD_CARD_CAMOUFLAGE.title": "Camouflage",
+  "GUNBREAKER_MOD_CARD_CAMOUFLAGE.description": "Gain {Block:diff()} Block. Reflect all Blocked damage back to attackers this turn.",
+  "GUNBREAKER_MOD_CARD_HEART_OF_LIGHT.title": "Heart of Light",
+  "GUNBREAKER_MOD_CARD_HEART_OF_LIGHT.description": "Apply {WeakPower:diff()} Weak to ALL enemies. Gain {BlockNextTurn:diff()} Block next turn.",
+  "GUNBREAKER_MOD_CARD_SUPERBOLIDE.title": "Superbolide",
+  "GUNBREAKER_MOD_CARD_SUPERBOLIDE.description": "Lose {HPLossPercent:diff()}% of your current HP. Take no damage this turn.",
+  "GUNBREAKER_MOD_CARD_SOUL_OF_AZURE.title": "Soul of Azure",
+  "GUNBREAKER_MOD_CARD_SOUL_OF_AZURE.description": "At the start of your turn, gain {Buffer:diff()} Buffer and 1 Cartridge."
 }
