@@ -1,7 +1,8 @@
-using System.Linq;
 using GunbreakerMod.GunbreakerModCode;
 using GunbreakerMod.GunbreakerModCode.Characters;
 using Godot;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using STS2RitsuLib;
@@ -20,14 +21,15 @@ namespace GunbreakerMod.GunbreakerModCode.Resources;
 // resource style in RitsuLib (confirmed via decompiling SecondaryResourceCounterStyle/NSecondaryResourceIcon -
 // neither supports multiple discrete pips), so this is a small custom Control built by hand.
 //
-// IMPORTANT: this node MUST be a plain HBoxContainer/TextureRect tree, NOT a custom Node subclass
-// with overridden _Ready()/_Process(). An earlier attempt at a custom `PipRow : HBoxContainer` with
-// its own _Process() crashed NCombatUi's setup on every combat start (confirmed via log stack
+// IMPORTANT: this node MUST be a plain HBoxContainer/TextureRect/Timer tree, NOT a custom Node
+// subclass with overridden _Ready()/_Process(). An earlier attempt at a custom `PipRow : HBoxContainer`
+// with its own _Process() crashed NCombatUi's setup on every combat start (confirmed via log stack
 // trace: MonoMod.Core.Interop.CoreCLR.V60.InvokeCompileMethod threw ArgumentException from inside
 // PipRow.InvokeGodotClassMethod during NCombatUi._Ready's node-attachment pass, aborting
 // NRun.SetCurrentRoom entirely - which is why the character visuals and HP bar disappeared too,
 // not just the pips). Root cause not fully understood (looks like a JIT/hot-patch conflict specific
-// to custom Godot node subclasses in this modded environment), so the fix is to just not do that.
+// to custom Godot node subclasses in this modded environment), so "self-refreshing" behavior here
+// is built from a plain built-in Timer node's Timeout event instead - stock Godot type, no override.
 public static class CartridgeResource
 {
     private const string LocalId = "cartridge";
@@ -36,6 +38,7 @@ public static class CartridgeResource
     private const float PipGap = 8f;
     private const float BorderThickness = 3f;
     private const float GapAboveEnergyOrb = 14f;
+    private const float SelfRefreshIntervalSeconds = 0.2f;
 
     private static readonly Color LitColor = new(0.25f, 0.85f, 1f);
     private static readonly Color UnlitColor = new(0.55f, 0.55f, 0.6f);
@@ -66,18 +69,18 @@ public static class CartridgeResource
         resources.AlwaysShowInCombatUiForCharacter<Gunbreaker>(LocalId, 0);
         resources.RegisterCombatUi(
             LocalId,
-            parent => CreatePipRow(definition),
-            update: UpdatePipRow);
+            parent => CreatePipRow(),
+            update: ctx => RefreshPipRow(ctx.Node, ctx.Player));
 
         return definition;
     }
 
-    private static HBoxContainer CreatePipRow(SecondaryResourceDefinition definition)
+    private static HBoxContainer CreatePipRow()
     {
         var row = new HBoxContainer { MouseFilter = Control.MouseFilterEnum.Ignore };
         row.AddThemeConstantOverride("separation", (int)PipGap);
 
-        var texture = GD.Load<Texture2D>(definition.SmallIconPath);
+        var texture = GD.Load<Texture2D>(Definition.SmallIconPath);
         for (var i = 0; i < Slots; i++)
         {
             var cell = new Control
@@ -115,29 +118,46 @@ public static class CartridgeResource
             row.AddChild(cell);
         }
 
-        // Fixes the "pips don't show until the first Cartridge gain" bug without a custom node
-        // class: RitsuLib hides every freshly-registered combat-UI attachment synchronously right
-        // after this factory returns (SecondaryResourceUiRuntime.HideCombatUi), and the very first
-        // NCombatUi.Activate()-triggered refresh can race against that same-frame hide and lose. A
-        // deferred Show() runs after the current frame's synchronous work (including that hide
-        // call) finishes, so it reliably wins - later "update" calls (resource changes) take over
-        // real visibility/lit-state/position from there.
-        row.CallDeferred(CanvasItem.MethodName.Show);
+        // Self-healing safety net: RitsuLib's own "update" callback (wired above) is the normal
+        // path, but it can miss the very first refresh at combat start - RitsuLib hides every
+        // freshly-registered combat-UI attachment synchronously right after this factory returns
+        // (SecondaryResourceUiRuntime.HideCombatUi), and NCombatUi.Activate()'s one-shot refresh can
+        // race against that same-frame hide and lose (confirmed reproducible even with a
+        // CallDeferred Show() attempt). Rather than guess further at RitsuLib's internal dispatch
+        // timing, this Timer independently recomputes the correct state every 0.2s using
+        // CombatManager/LocalContext directly - the same lookup RitsuLib's own Activate patch uses
+        // to resolve "the local player" - so it converges on the right answer regardless of whether
+        // the event-driven path fired correctly.
+        var timer = new Godot.Timer
+        {
+            WaitTime = SelfRefreshIntervalSeconds,
+            Autostart = true,
+            OneShot = false,
+        };
+        timer.Timeout += () =>
+        {
+            if (!GodotObject.IsInstanceValid(row))
+            {
+                return;
+            }
+            var state = CombatManager.Instance.DebugOnlyGetState();
+            RefreshPipRow(row, LocalContext.GetMe(state));
+        };
+        row.AddChild(timer);
 
         return row;
     }
 
-    private static void UpdatePipRow(SecondaryResourceCombatUiContext<NCombatUi, HBoxContainer> ctx)
+    private static void RefreshPipRow(HBoxContainer row, Player? player)
     {
-        var row = ctx.Node;
-        var isVisible = ctx.Player != null && ctx.VisibleDefinitions.Any(d => d.Id == Id);
+        var isVisible = player?.Character is Gunbreaker;
         row.Visible = isVisible;
         if (!isVisible)
         {
             return;
         }
 
-        var amount = SecondaryResourceStateStore.GetAmount(ctx.Player!, Id);
+        var amount = SecondaryResourceStateStore.GetAmount(player!, Id);
         for (var i = 0; i < row.GetChildCount(); i++)
         {
             if (row.GetChild(i) is not Control cell || cell.GetChildCount() < 2)
@@ -150,7 +170,11 @@ public static class CartridgeResource
             }
         }
 
-        var energyContainer = ctx.Parent.GetNodeOrNull<Control>("%EnergyCounterContainer");
+        if (row.GetParent() is not NCombatUi combatUi)
+        {
+            return;
+        }
+        var energyContainer = combatUi.GetNodeOrNull<Control>("%EnergyCounterContainer");
         if (energyContainer == null)
         {
             return;

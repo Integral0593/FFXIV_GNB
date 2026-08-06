@@ -70,7 +70,7 @@
   "GUNBREAKER_MOD_CARD_TRAJECTORY.description": "抽{Draw:diff()}张牌。",
 
   "GUNBREAKER_MOD_CARD_ROYAL_GUARD.title": "王室亲卫",
-  "GUNBREAKER_MOD_CARD_ROYAL_GUARD.description": "每当敌人攻击你时，该敌人失去{Strength:diff()}点力量。",
+  "GUNBREAKER_MOD_CARD_ROYAL_GUARD.description": "每当敌人攻击你时，该敌人在下回合失去{Strength:diff()}点力量。",
 
   "GUNBREAKER_MOD_CARD_FINISHER.title": "终结技",
   "GUNBREAKER_MOD_CARD_FINISHER.description": "获得{CartridgeGain:diff()}档晶壤，在抽牌堆顶部放入一张【崛起之心】。",

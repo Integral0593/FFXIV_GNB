@@ -29,8 +29,8 @@ image/                   角色美术源文件暂存
 - **奖励池的稀有度规则**：奖励/商店的稀有度摇点只在 Common/Uncommon/Rare 之间循环，Basic 和 Token 永远不会作为奖励出现。卡池必须始终保有一定数量的 Common 及以上卡牌，否则奖励结算会抛异常卡死。
 - **商店按卡牌类型（Attack/Skill/Power）也要有余量**：商店固定会摇一张各`CardType`的卡牌上架。如果某个类型在卡池里只有一张卡、且这张卡是"拥有后自我排除"的唯一卡（比如续剑），玩家拿到它之后该类型就会变成0张可上架——所以任何"唯一卡"都要确认它所属的`CardType`在卡池里还有其他候选。
 - **副资源费用要在 `AfterCloned()` 里设置，不是 `AfterCreated()`**：`this.SecondaryCosts().Set(...)` 这类费用数据挂在按卡牌实例引用寻址的附加状态表上，而战斗内实际使用的卡牌实例是通过克隆产生的；只有 `AfterCloned()` 保证每次克隆都会重新执行，`AfterCreated()` 不会。
-- **战斗内自定义UI节点，不要继承 Node 子类去覆盖 `_Ready()`/`_Process()`**：只用普通的内置节点类型（HBoxContainer/TextureRect/Control等）拼装即可；需要处理时序问题时用 `CallDeferred(...)`，不要用自定义子类的每帧轮询（原因见下方"已修复的问题"）。
-- **战斗立绘图片不能太大**：普通PNG被自动包装成`NCreatureVisuals`时，游戏会直接用图片的像素尺寸去计算受击框/血条尺寸；图片太大（远超原版角色立绘的常见尺寸量级）会导致这部分计算出问题。战斗立绘建议控制在长边800px以内（可参考`gunbreaker_char.png`当前的503x700）。
+- **战斗内自定义UI节点，不要继承 Node 子类去覆盖 `_Ready()`/`_Process()`**：只用普通的内置节点类型（HBoxContainer/TextureRect/Control/Timer等）拼装即可。需要"每隔一段时间自我校正一次"的效果时，用一个普通的`Godot.Timer`节点接它内置的`Timeout`事件即可，不需要自定义子类的每帧轮询（原因见下方"已修复的问题"）。
+- **战斗立绘图片不能太大**：普通PNG被自动包装成`NCreatureVisuals`时，游戏会直接用图片的像素尺寸去计算受击框/血条尺寸，也直接决定了在战斗中的显示大小；图片太大（远超原版角色立绘的常见尺寸量级）不仅显示会异常大，还会导致血条对齐计算出错。战斗立绘目前定在长边400px左右（参考`gunbreaker_char.png`当前的287x400）。
 
 ## 卡牌实装进度
 
@@ -106,7 +106,7 @@ image/                   角色美术源文件暂存
 ### 减伤/生存
 | Key | 名称 | 状态 |
 |---|---|---|
-| RoyalGuard | 王室亲卫 | ✅ Uncommon，被攻击时反击敌人力量 |
+| RoyalGuard | 王室亲卫 | ✅ Uncommon，被攻击时该敌人下回合失去力量（非永久） |
 | Rampart | 铁壁 | ✅ Uncommon |
 | Nebula | 星云 | ⬜ 未实装 |
 | HeartOfLight | 光之心 | ⬜ 未实装 |
@@ -131,7 +131,7 @@ CasingRecovery、TacticalReload、FullMagazine
 
 ## 美术资源现状
 
-- 【打击】【终结技】卡面、角色战斗立绘（`gunbreaker_char.png`，暂无动画，静态图，503x700）已替换为用户绘制的正式 STS2 风格美术。
+- 【打击】【终结技】卡面、角色战斗立绘（`gunbreaker_char.png`，暂无动画，静态图，287x400）已替换为用户绘制的正式 STS2 风格美术。
 - 【防御】直接复用原版铁甲战士的 Defend 卡面（`res://images/atlases/card_atlas.sprites/ironclad/defend_ironclad.tres`），不单独绘制。
 - 其余卡牌仍是 FF14 官方技能图标裁剪的占位图，待后续按 STS2 风格逐步替换。
 
@@ -142,7 +142,8 @@ CasingRecovery、TacticalReload、FullMagazine
 - **2026-08-05｜商店进入黑屏卡死**：商店固定要为每种`CardType`摇一张卡上架；续剑是卡池里唯一的Power卡，玩家拿到后它会自我排除，导致Power类型在商店池归零，`CardFactory.CreateForMerchant`直接抛异常（存档停在商店房间，读档会反复触发同一个崩溃）。通过新增第二张Power卡（王室亲卫）修复。
 - **2026-08-05｜消耗晶壤的卡可以在没有晶壤时免费打出**：`SecondaryCosts().Set(...)`设置的费用数据没有随卡牌克隆一起复制，`AfterCreated()`只在特定创建路径上执行，导致战斗内实际使用的克隆实例常常丢失费用声明。改为在`AfterCloned()`里设置后修复（爆发打击/极光/烈牙/倍攻均受影响）。
 - **2026-08-06｜自定义晶壤图标节点导致战斗界面整体崩溃（无人物、无血条、无晶壤槽）**：为了修复晶壤图标"开局不显示"的时序问题，把图标行改写成了自定义`PipRow : HBoxContainer`子类并覆盖`_Ready()`/`_Process()`，结果这个节点类导致MonoMod的JIT钩子在每次进入战斗时直接抛异常，异常一路冒泡打断了整个战斗房间的搭建流程（`NRun.SetCurrentRoom`），不只是晶壤图标，人物立绘和血条都因此消失。根因未完全查清（疑似自定义节点子类的虚方法覆盖和这套魔改环境下的MonoMod热补丁有冲突）。改回普通内置节点+`CallDeferred`后修复。
-- **2026-08-06｜替换正式角色立绘后人物和血条又双叒消失**：换上用户绘制的`gunbreaker_char.png`（1792x2496）后触发了另一个独立的崩溃——`NHealthBarGraftUiPatchHelper.SyncHpBarToHitbox`在计算血条对齐受击框尺寸时报"数值不是有限数"的引擎级错误。反编译`RitsuNCreatureVisualsNodeFactory.FromTexture`确认：一张普通PNG被自动包装成`NCreatureVisuals`时，受击框尺寸直接用图片像素尺寸乘系数得出——而新立绘的像素面积是此前占位图（400x700）的约16倍，超出了这部分尺寸/血条对齐计算能正常处理的量级。将立绘等比缩小到503x700（与占位图同高）后修复，画质在战斗中的显示尺寸下没有明显损失。
+- **2026-08-06｜替换正式角色立绘后人物和血条又双叒消失**：换上用户绘制的`gunbreaker_char.png`（1792x2496）后触发了另一个独立的崩溃——`NHealthBarGraftUiPatchHelper.SyncHpBarToHitbox`在计算血条对齐受击框尺寸时报"数值不是有限数"的引擎级错误。反编译`RitsuNCreatureVisualsNodeFactory.FromTexture`确认：一张普通PNG被自动包装成`NCreatureVisuals`时，受击框尺寸直接用图片像素尺寸乘系数得出——而新立绘的像素面积远超此前占位图（400x700），超出了这部分尺寸/血条对齐计算能正常处理的量级。先缩小到503x700修复了崩溃，但显示尺寸依然明显偏大，之后又进一步缩小到287x400（长边约400px，参考"Bounds"槽位在框架里的默认兜底尺寸240x280推算出的量级）。
+- **2026-08-06｜晶壤图标"开局不显示"没有被`CallDeferred`真正修好**：上一版用`CallDeferred(Show)`只做了一次性的补救，但实测仍然不稳定。改为在图标行上挂一个内置的`Godot.Timer`节点（每0.2秒触发一次），每次直接用`CombatManager.Instance.DebugOnlyGetState()` + `LocalContext.GetMe(...)`重新取得当前玩家、重新计算应不应该显示，不再依赖RitsuLib那次"结算UI是否注册好了"的内部时序是否踩对点——这样无论一开始那次刷新有没有生效，最多0.2秒内都会被这个定时器自我纠正回正确状态。
 
 ## 开发须知
 

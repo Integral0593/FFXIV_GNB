@@ -70,7 +70,7 @@
   "GUNBREAKER_MOD_CARD_TRAJECTORY.description": "Draw {Draw:diff()} cards.",
 
   "GUNBREAKER_MOD_CARD_ROYAL_GUARD.title": "Royal Guard",
-  "GUNBREAKER_MOD_CARD_ROYAL_GUARD.description": "Whenever an enemy attacks you, it loses {Strength:diff()} Strength.",
+  "GUNBREAKER_MOD_CARD_ROYAL_GUARD.description": "Whenever an enemy attacks you, it loses {Strength:diff()} Strength for its next turn.",
 
   "GUNBREAKER_MOD_CARD_FINISHER.title": "Finisher",
   "GUNBREAKER_MOD_CARD_FINISHER.description": "Gain {CartridgeGain:diff()} Cartridges. Put a Reign of Beasts on top of your draw pile.",

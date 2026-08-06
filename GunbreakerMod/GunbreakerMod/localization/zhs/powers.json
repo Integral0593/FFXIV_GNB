@@ -6,5 +6,5 @@
   "GUNBREAKER_MOD_POWER_HEART_OF_STONE_STRENGTH_DOWN_POWER.title": "石之心",
   "GUNBREAKER_MOD_POWER_HEART_OF_STONE_STRENGTH_DOWN_POWER.description": "力量将在本回合结束后恢复。",
   "GUNBREAKER_MOD_POWER_ROYAL_GUARD_POWER.title": "王室亲卫",
-  "GUNBREAKER_MOD_POWER_ROYAL_GUARD_POWER.description": "敌人每次攻击你时都会失去力量。"
+  "GUNBREAKER_MOD_POWER_ROYAL_GUARD_POWER.description": "敌人每次攻击你时，都会在其下回合失去力量。"
 }

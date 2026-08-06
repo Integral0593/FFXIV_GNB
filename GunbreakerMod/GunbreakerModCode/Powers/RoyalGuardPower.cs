@@ -10,9 +10,10 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace GunbreakerMod.GunbreakerModCode.Powers;
 
 // 王室亲卫 Royal Guard - whenever an attack lands on the owner, the attacking creature loses
-// Strength. Mirrors the base game's ThornsPower (same BeforeDamageReceived hook, same
-// props.IsPoweredAttack() guard to only react to real attacks), just targeting Strength on the
-// dealer instead of dealing damage back.
+// Strength for its next turn (not permanently - see RoyalGuardWeaknessPower). Mirrors the base
+// game's ThornsPower for the reaction hook (same BeforeDamageReceived, same props.IsPoweredAttack()
+// guard to only react to real attacks); the actual Strength change is delegated to
+// RoyalGuardWeaknessPower on the attacker, which owns the temporary-duration logic.
 [RegisterPower]
 public sealed class RoyalGuardPower : PowerModel
 {
@@ -26,7 +27,7 @@ public sealed class RoyalGuardPower : PowerModel
         if (target == Owner && dealer != null && props.IsPoweredAttack())
         {
             Flash();
-            await PowerCmd.Apply<StrengthPower>(choiceContext, dealer, -Amount, Owner, null);
+            await PowerCmd.Apply<RoyalGuardWeaknessPower>(choiceContext, dealer, Amount, Owner, null);
         }
     }
 }
