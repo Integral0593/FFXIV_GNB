@@ -30,8 +30,12 @@ image/                   角色美术源文件暂存
 
 - **晶壤 (Cartridge)**：独立于能量的副资源，上限 3，战斗内不清空、跨战斗重置。战斗界面用 3 个菱形图标显示（未点亮=灰，点亮=蓝，带白色描边），位置固定在能量球正上方（见 `Resources/CartridgeResource.cs`）。
 - **续剑 (Continuation)**：打出【续剑】后获得 `ContinuationPower`（隐藏标记，无独立图标）。此后每张会消耗晶壤的卡牌在自己的 `OnPlay` 里各自检查 `HasPower<ContinuationPower>()`，额外生成一张对应的续剑token。没有统一的全局钩子，每条连击链自己维护映射关系。续剑本身在拥有后会从奖励池/商店池自动排除（不会抽到第二张）。
+<<<<<<< HEAD
 - **终结连击**：打出【终结击】（Terminal Trigger）后在抽牌堆顶部放入【崛起之心】，打出后再放入【支配之心】，再放入【终结之心】——是严格的顺序链条，不是三选一分支。每张都对主目标造成高伤害、对其余敌人造成溅射伤害。
 - **攻击牌前冲动作**：角色没有 Spine 骨骼动画（纯静态图），原版 `SetAnimationTrigger("Attack")` 对我们的立绘是空操作。改为在 `Vfx/AttackLungeListener.cs` 里注册一个全局的 `ICardOnPlayHookListener`：任意 Attack 类型的卡被 Gunbreaker 打出时，用一个 Godot `Tween` 让 `NCreature.Visuals`（只包含立绘本体，不含血条/UI）前冲再弹回，不阻塞卡牌本身的伤害结算（tween 不等待完成）。
+=======
+- **终结技连击**：打出【终结技】后在抽牌堆顶部放入【崛起之心】，打出后再放入【支配之心】，再放入【终结之心】。每张都对主目标造成高伤害、对其余敌人造成溅射伤害。
+>>>>>>> bb471067174aef77c80e5bd27758a280260f86ac
 
 ## 卡牌实装进度
 
