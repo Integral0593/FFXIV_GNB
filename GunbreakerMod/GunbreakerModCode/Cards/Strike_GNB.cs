@@ -14,6 +14,11 @@ namespace GunbreakerMod.GunbreakerModCode.Cards;
 [RegisterCharacterStarterCard(typeof(Gunbreaker), 3)]
 public sealed class Strike_GNB() : ModCardTemplate(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy)
 {
+    public override CardAssetProfile AssetProfile => new()
+    {
+        PortraitPath = "res://GunbreakerMod/images/card_portraits/strike_gnb.png",
+    };
+
     protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(6m, ValueProp.Move)];

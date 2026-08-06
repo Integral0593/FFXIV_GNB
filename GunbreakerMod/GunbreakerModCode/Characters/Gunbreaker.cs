@@ -57,7 +57,8 @@ public sealed class Gunbreaker : ModCharacterTemplate<GunbreakerCardPool, Gunbre
         },
         Scenes = new()
         {
-            VisualsPath = "res://GunbreakerMod/images/creature_placeholder.png",
+            // Real character art (no animation rig yet, per user - static image is fine for now).
+            VisualsPath = "res://GunbreakerMod/images/gunbreaker_char.png",
         },
     };
 

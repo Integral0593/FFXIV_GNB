@@ -14,6 +14,15 @@ namespace GunbreakerMod.GunbreakerModCode.Cards;
 [RegisterCharacterStarterCard(typeof(Gunbreaker), 4)]
 public sealed class Defend_GNB() : ModCardTemplate(1, CardType.Skill, CardRarity.Basic, TargetType.Self)
 {
+    // Per user request: reuse the vanilla Ironclad Defend art directly rather than commissioning a
+    // unique portrait, since Defend isn't getting custom Gunbreaker art. Path built from the same
+    // formula CardModel.PortraitPath itself uses (confirmed via decompile):
+    // res://images/atlases/card_atlas.sprites/{pool.Title}/{id.Entry}.tres, lowercased.
+    public override CardAssetProfile AssetProfile => new()
+    {
+        PortraitPath = "res://images/atlases/card_atlas.sprites/ironclad/defend_ironclad.tres",
+    };
+
     public override bool GainsBlock => true;
 
     protected override HashSet<CardTag> CanonicalTags => [CardTag.Defend];

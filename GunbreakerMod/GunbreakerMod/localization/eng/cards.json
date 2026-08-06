@@ -70,5 +70,14 @@
   "GUNBREAKER_MOD_CARD_TRAJECTORY.description": "Draw {Draw:diff()} cards.",
 
   "GUNBREAKER_MOD_CARD_ROYAL_GUARD.title": "Royal Guard",
-  "GUNBREAKER_MOD_CARD_ROYAL_GUARD.description": "Whenever an enemy attacks you, it loses {Strength:diff()} Strength."
+  "GUNBREAKER_MOD_CARD_ROYAL_GUARD.description": "Whenever an enemy attacks you, it loses {Strength:diff()} Strength.",
+
+  "GUNBREAKER_MOD_CARD_FINISHER.title": "Finisher",
+  "GUNBREAKER_MOD_CARD_FINISHER.description": "Gain {CartridgeGain:diff()} Cartridges. Put a Reign of Beasts on top of your draw pile.",
+  "GUNBREAKER_MOD_CARD_REIGN_OF_BEASTS.title": "Reign of Beasts",
+  "GUNBREAKER_MOD_CARD_REIGN_OF_BEASTS.description": "Deal {DamageMain:diff()} damage to target enemy and {DamageSplash:diff()} damage to the rest. Put a Noble Blood on top of your draw pile.",
+  "GUNBREAKER_MOD_CARD_NOBLE_BLOOD.title": "Noble Blood",
+  "GUNBREAKER_MOD_CARD_NOBLE_BLOOD.description": "Deal {DamageMain:diff()} damage to target enemy and {DamageSplash:diff()} damage to the rest. Put a Lion Heart on top of your draw pile.",
+  "GUNBREAKER_MOD_CARD_LION_HEART.title": "Lion Heart",
+  "GUNBREAKER_MOD_CARD_LION_HEART.description": "Deal {DamageMain:diff()} damage to target enemy and {DamageSplash:diff()} damage to the rest."
 }

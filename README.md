@@ -72,10 +72,10 @@ image/                   角色美术源文件暂存
 |---|---|---|
 | DoubleDown | 倍攻 | ✅ Rare，不接续剑逻辑 |
 | Bloodfest | 血壤 | ✅ Common，纯获得晶壤 |
-| Finisher | 终结技 | ⬜ 未实装（需要三选一生成机制） |
-| ReignOfBeasts | 崛起之心 | ⬜ 未实装（终结技分支token） |
-| NobleBlood | 支配之心 | ⬜ 未实装（终结技分支token） |
-| LionHeart | 终结之心 | ⬜ 未实装（终结技分支token） |
+| Finisher | 终结技 | ✅ Rare，获得晶壤+在抽牌堆顶部放入崛起之心 |
+| ReignOfBeasts | 崛起之心 | ✅ 主目标+溅射，在抽牌堆顶部放入支配之心 |
+| NobleBlood | 支配之心 | ✅ 主目标+溅射，在抽牌堆顶部放入终结之心 |
+| LionHeart | 终结之心 | ✅ 主目标+溅射（链末端） |
 
 ### AoE连击链
 | Key | 名称 | 状态 |
@@ -118,7 +118,7 @@ EnergyRelease、RapidReload、EmptyMag、Trigger、Overcharge、SoulOfAzure、
 MagazineExpansion、Roulette、EtherConversion、IntegratedImpact、SuppressingFire、
 CasingRecovery、TacticalReload、FullMagazine
 
-**统计**：表格总计 55 张卡（不含草稿区 14 张），已实装 33 张，未实装 8 张（Finisher链4张 + BlastingZone + Nebula + HeartOfLight + Camouflage + Superbolide）。
+**统计**：表格总计 40 张卡（不含草稿区 14 张；此前版本这里统计错误，已更正），已实装 35 张，未实装 5 张：BlastingZone、Nebula、HeartOfLight、Camouflage、Superbolide。
 
 ## 遗物 / 药水
 
@@ -129,7 +129,7 @@ CasingRecovery、TacticalReload、FullMagazine
 
 - 卡牌边框颜色 `#01FCFE` 的着色器实验（`GunbreakerCardPool.PoolFrameMaterial`）未确认生效，用户表示暂不修复。
 - 角色初始卡数量（KeenEdge=1、NoMercy=1、BurstStrike=1）均为设计表格未明确给出、由开发者暂定的数值，未经用户最终确认。
-- 全部美术资源均为 FF14 官方技能图标裁剪的占位图，正式美术会按 STS2 风格重绘。
+- 美术资源现状：【打击】【终结技】卡面、角色战斗立绘（`gunbreaker_char.png`，暂无动画，静态图）已替换为用户绘制的正式 STS2 风格美术；【防御】直接复用原版铁甲战士的 Defend 卡面（`res://images/atlases/card_atlas.sprites/ironclad/defend_ironclad.tres`），不单独绘制；其余卡牌仍是 FF14 官方技能图标裁剪的占位图，待后续按 STS2 风格逐步替换。
 
 ## 开发须知
 
