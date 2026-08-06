@@ -1,6 +1,6 @@
 # GunbreakerMod
 
-FFXIV 绝枪战士（Gunbreaker）主题的 Slay the Spire 2 角色模组，基于 [STS2-RitsuLib](https://github.com/BAKAOLC/STS2-RitsuLib) 框架开发。卡牌设计以 `cards_gnb_updated.xlsx` 为唯一权威来源，本文档跟踪对照表格的实装进度，并记录开发过程中踩过的坑。
+FFXIV 绝枪战士（Gunbreaker）主题的 Slay the Spire 2 角色模组，基于 [STS2-RitsuLib](https://github.com/BAKAOLC/STS2-RitsuLib) 框架开发。卡牌设计以 `cards_gnb_updated.xlsx` 为唯一权威来源，本文档跟踪实装进度并记录踩过的坑。
 
 ## 项目结构
 
@@ -12,6 +12,7 @@ GunbreakerMod/
     Characters/   角色定义（Gunbreaker.cs）
     Relics/       遗物
     Resources/    自定义副资源（晶壤/Cartridge）
+    Vfx/          战斗内视觉效果钩子（如攻击前冲动画）
   GunbreakerMod/
     images/       美术资源（card_portraits = 卡面裁剪图，skill_icons = 原始下载图）
     localization/ 本地化文本（eng / zhs 两套）
@@ -23,114 +24,103 @@ image/                   角色美术源文件暂存
 
 - 构建前确认游戏未在运行：`Get-Process -Name "SlayTheSpire2" -ErrorAction SilentlyContinue`（PowerShell）
 - 构建命令：`dotnet build`（在 `GunbreakerMod/` 目录下）
-- 日志位置：`%APPDATA%\SlayTheSpire2\logs\godot.log`（每次启动游戏会话滚动一次，排查问题时的第一手资料）
-- 反编译核对 API 时使用的 scratch 项目基于 `ICSharpCode.Decompiler`，指向本机安装的 `sts2.dll` 与 NuGet 缓存里的 `STS2-RitsuLib.dll`；必要时也会反编译其他同样基于 RitsuLib 的创意工坊模组（如 Watcher、Squall）来找可参考的实现。
+- 日志位置：`%APPDATA%\SlayTheSpire2\logs\godot.log`，每次启动游戏会话滚动一次，排查问题的第一手资料
+- 反编译核对 API 用的 scratch 项目基于 `ICSharpCode.Decompiler`，指向本机 `sts2.dll` 与 NuGet 缓存里的 `STS2-RitsuLib.dll`；必要时也会反编译其他基于 RitsuLib 的创意工坊模组（如 Watcher、Squall）找参考实现
 
-## 玩法设计：核心机制
+## 核心机制
 
-- **晶壤 (Cartridge)**：独立于能量的副资源，上限 3，战斗内不清空、跨战斗重置。战斗界面用 3 个菱形图标显示（未点亮=灰，点亮=蓝，带白色描边），位置固定在能量球正上方（见 `Resources/CartridgeResource.cs`）。
-- **续剑 (Continuation)**：打出【续剑】后获得 `ContinuationPower`（隐藏标记，无独立图标）。此后每张会消耗晶壤的卡牌在自己的 `OnPlay` 里各自检查 `HasPower<ContinuationPower>()`，额外生成一张对应的续剑token。没有统一的全局钩子，每条连击链自己维护映射关系。续剑本身在拥有后会从奖励池/商店池自动排除（不会抽到第二张）。
-<<<<<<< HEAD
-- **终结连击**：打出【终结击】（Terminal Trigger）后在抽牌堆顶部放入【崛起之心】，打出后再放入【支配之心】，再放入【终结之心】——是严格的顺序链条，不是三选一分支。每张都对主目标造成高伤害、对其余敌人造成溅射伤害。
-- **攻击牌前冲动作**：角色没有 Spine 骨骼动画（纯静态图），原版 `SetAnimationTrigger("Attack")` 对我们的立绘是空操作。改为在 `Vfx/AttackLungeListener.cs` 里注册一个全局的 `ICardOnPlayHookListener`：任意 Attack 类型的卡被 Gunbreaker 打出时，用一个 Godot `Tween` 让 `NCreature.Visuals`（只包含立绘本体，不含血条/UI）前冲再弹回，不阻塞卡牌本身的伤害结算（tween 不等待完成）。
-=======
-- **终结技连击**：打出【终结技】后在抽牌堆顶部放入【崛起之心】，打出后再放入【支配之心】，再放入【终结之心】。每张都对主目标造成高伤害、对其余敌人造成溅射伤害。
->>>>>>> bb471067174aef77c80e5bd27758a280260f86ac
+- **晶壤 (Cartridge)**：独立于能量的副资源，上限 3，战斗内不清空、跨战斗重置。战斗界面用 3 个菱形图标显示在能量球正上方（未点亮=灰，点亮=蓝，带白色描边），见 `Resources/CartridgeResource.cs`。
+- **续剑 (Continuation)**：打出【续剑】后获得隐藏的 `ContinuationPower`。此后每张消耗晶壤的卡在自己的 `OnPlay` 里检查 `HasPower<ContinuationPower>()`，额外生成对应续剑 token；没有统一的全局钩子，每条连击链自己维护映射。续剑拥有后自动从奖励/商店池排除。
+- **终结连击**：打出【终结击】（Terminal Trigger）后在抽牌堆顶部放入【崛起之心】，打出后再放入【支配之心】，再放入【终结之心】——严格顺序链条，不是三选一分支，每张都对主目标造成高伤害、对其余敌人造成溅射伤害。
+- **攻击牌前冲动作**：角色没有 Spine 骨骼动画（纯静态图），原版 `SetAnimationTrigger("Attack")` 对我们的立绘是空操作。改为在 `Vfx/AttackLungeListener.cs` 里注册全局的 `ICardOnPlayHookListener`：Gunbreaker 打出 Attack 类型卡时，用 Godot `Tween` 让 `NCreature.Visuals`（只含立绘本体，不含血条/UI）前冲再弹回，不阻塞卡牌本身的伤害结算。
 
-## 卡牌实装进度
+## 卡牌进度
 
-对照表格分区，✅ = 已实装并可在游戏中获取，⬜ = 表格已定稿但未实装，📝 = 表格中标记"草稿"、设计未最终确定。
+✅ = 已实装，📝 = 表格中标记"草稿"、设计未最终确定（暂不实装）。全部非草稿卡已实装完毕。
 
-### 基础卡
-| Key | 名称 | 状态 |
+### 基础 / 爆发窗口
+| Key | 名称 | 备注 |
 |---|---|---|
-| Strike_GNB | 打击 | ✅ 初始卡 x3 |
-| Defend_GNB | 防御 | ✅ 初始卡 x4 |
-
-### 增伤/爆发窗口
-| Key | 名称 | 状态 |
-|---|---|---|
-| NoMercy | 无情 | ✅ 初始卡 x1 |
+| Strike_GNB | 打击 | 初始卡 x3 |
+| Defend_GNB | 防御 | 初始卡 x4，复用原版铁甲战士卡面 |
+| NoMercy | 无情 | 初始卡 x1 |
 
 ### 基础连击链
-| Key | 名称 | 状态 |
+| Key | 名称 | 备注 |
 |---|---|---|
-| KeenEdge | 利刃斩 | ✅ 初始卡 x1 |
-| BrutalShell | 残暴弹 | ✅ 连击生成 |
-| SolidBarrel | 迅连斩 | ✅ 连击生成，获得1档晶壤 |
+| KeenEdge | 利刃斩 | 初始卡 x1 |
+| BrutalShell | 残暴弹 | 连击生成 |
+| SolidBarrel | 迅连斩 | 连击生成，获得1档晶壤 |
 
 ### 续剑核心
-| Key | 名称 | 状态 |
+| Key | 名称 | 备注 |
 |---|---|---|
-| Continuation | 续剑 | ✅ Uncommon，自动从奖励/商店池排除重复 |
-| BurstStrike | 爆发打击 | ✅ 初始卡 x1，晶壤满时自动回手牌 |
-| Hypervelocity | 超高速 | ✅ 爆发打击的续剑token |
+| Continuation | 续剑 | Uncommon，自动排除重复 |
+| BurstStrike | 爆发打击 | 初始卡 x1，晶壤满时自动回手牌 |
+| Hypervelocity | 超高速 | 爆发打击续剑 token |
 
 ### 晶壤消耗链：烈牙连
-| Key | 名称 | 状态 |
+| Key | 名称 | 备注 |
 |---|---|---|
-| GnashingFang | 烈牙 | ✅ Uncommon |
-| SavageClaw | 猛兽爪 | ✅ 连击生成 |
-| WickedTalon | 凶禽爪 | ✅ 连击生成（链末端） |
-| JugularRip | 撕喉 | ✅ 烈牙的续剑token |
-| AbdomenTear | 裂膛 | ✅ 猛兽爪的续剑token |
-| EyeGouge | 穿目 | ✅ 凶禽爪的续剑token |
+| GnashingFang | 烈牙 | Uncommon |
+| SavageClaw | 猛兽爪 | 连击生成 |
+| WickedTalon | 凶禽爪 | 连击生成（链末端） |
+| JugularRip | 撕喉 | 烈牙续剑 token |
+| AbdomenTear | 裂膛 | 猛兽爪续剑 token |
+| EyeGouge | 穿目 | 凶禽爪续剑 token |
 
-### 晶壤消耗链：倍攻/血壤/狮心连
-| Key | 名称 | 状态 |
+### 晶壤消耗链：倍攻 / 血壤 / 终结连
+| Key | 名称 | 备注 |
 |---|---|---|
-| DoubleDown | 倍攻 | ✅ Rare，Exhaust，不接续剑逻辑 |
-| Bloodfest | 血壤 | ✅ Common，纯获得晶壤 |
-| TerminalTrigger | 终结击 | ✅ Rare（原【终结技】Finisher 改名，效果不变），获得晶壤+在抽牌堆顶部放入崛起之心 |
-| ReignOfBeasts | 崛起之心 | ✅ 主目标+溅射，在抽牌堆顶部放入支配之心 |
-| NobleBlood | 支配之心 | ✅ 主目标+溅射，在抽牌堆顶部放入终结之心 |
-| LionHeart | 终结之心 | ✅ 主目标+溅射（链末端） |
+| DoubleDown | 倍攻 | Rare，Exhaust，不接续剑逻辑 |
+| Bloodfest | 血壤 | Common，纯获得晶壤 |
+| TerminalTrigger | 终结击 | Rare（原【终结技】Finisher 改名，效果不变） |
+| ReignOfBeasts | 崛起之心 | 主目标+溅射，生成支配之心 |
+| NobleBlood | 支配之心 | 主目标+溅射，生成终结之心 |
+| LionHeart | 终结之心 | 主目标+溅射（链末端） |
 
-### AoE连击链
-| Key | 名称 | 状态 |
+### AoE 连击链
+| Key | 名称 | 备注 |
 |---|---|---|
-| DemonSlice | 恶魔切 | ✅ Common |
-| DemonSlaughter | 恶魔杀 | ✅ 连击生成，获得1档晶壤 |
-| FatedCircle | 命运之环 | ✅ Uncommon |
-| FatedBrand | 命运之印 | ✅ 命运之环的续剑token |
+| DemonSlice | 恶魔切 | Common |
+| DemonSlaughter | 恶魔杀 | 连击生成，获得1档晶壤 |
+| FatedCircle | 命运之环 | Uncommon |
+| FatedBrand | 命运之印 | 命运之环续剑 token |
 
-### 机动/远程
-| Key | 名称 | 状态 |
+### 机动 / 远程
+| Key | 名称 | 备注 |
 |---|---|---|
-| LightningShot | 闪雷弹 | ✅ Common |
-| RoughDivide | 粗分斩 | ✅ Common |
-| Trajectory | 弹道 | ✅ Common（表格曾误写Basic，已修正） |
+| LightningShot | 闪雷弹 | Common |
+| RoughDivide | 粗分斩 | Common |
+| Trajectory | 弹道 | Common |
 
-### 高伤/DoT转化
-| Key | 名称 | 状态 |
+### 高伤 / DoT
+| Key | 名称 | 备注 |
 |---|---|---|
-| BlastingZone | 爆破领域 | ✅ Uncommon |
-| SonicBreak | 音速破 | ✅ Common |
-| BowShock | 弓形冲波 | ✅ Common |
+| BlastingZone | 爆破领域 | Uncommon |
+| SonicBreak | 音速破 | Common |
+| BowShock | 弓形冲波 | Common |
 
-### 减伤/生存
-| Key | 名称 | 状态 |
+### 减伤 / 生存
+| Key | 名称 | 备注 |
 |---|---|---|
-| RoyalGuard | 王室亲卫 | ✅ Uncommon，被攻击时该敌人下回合失去力量（非永久） |
-| Rampart | 铁壁 | ✅ Uncommon |
-| Nebula | 星云 | ✅ Rare |
-| HeartOfLight | 光之心 | ✅ Uncommon |
-| Camouflage | 伪装 | ✅ Uncommon，直接复用原版 `ReflectPower`，无需自定义Power |
-| HeartOfStone | 石之心 | ✅ Common |
-| HeartOfCorundum | 刚玉之心 | ✅ Uncommon |
-| Superbolide | 超火流星 | ✅ Rare，消耗2档晶壤，扣当前生命值一定比例，本回合免疫伤害（`SuperbolideImmunityPower` 包一层大额 `BufferPower`） |
-| Aurora | 极光 | ✅ Common |
-| Reprisal | 雪仇 | ✅ Common |
-| ArmsLength | 亲疏自行 | ✅ Common，Exhaust，获得人工制品（Artifact） |
-| SoulOfAzure | 灵魂之青 | ✅ Rare Power，回合开始时获得缓冲（Buffer，逐回合累加）+1档晶壤 |
+| RoyalGuard | 王室亲卫 | Uncommon，被攻击时该敌人下回合失去力量（非永久） |
+| Rampart | 铁壁 | Uncommon |
+| Nebula | 星云 | Rare |
+| HeartOfLight | 光之心 | Uncommon |
+| Camouflage | 伪装 | Uncommon，格挡伤害反弹给敌人 |
+| HeartOfStone | 石之心 | Common |
+| HeartOfCorundum | 刚玉之心 | Uncommon |
+| Superbolide | 超火流星 | Rare，消耗2档晶壤，扣血后本回合免疫伤害 |
+| Aurora | 极光 | Common，消耗1档晶壤 |
+| Reprisal | 雪仇 | Common |
+| ArmsLength | 亲疏自行 | Common，Exhaust，获得人工制品 |
+| SoulOfAzure | 灵魂之青 | Rare Power，回合开始获得缓冲（逐回合累加）+1档晶壤 |
 
-### 运转端（能力牌 / 技能攻击牌 / 抽牌）
-表格标记为"草稿"，设计尚未最终确定，全部 📝 暂不实装：
-EnergyRelease、RapidReload、EmptyMag、Trigger、Overcharge、
-MagazineExpansion、Roulette、EtherConversion、IntegratedImpact、SuppressingFire、
-CasingRecovery、TacticalReload、FullMagazine
+### 草稿区（暂不实装）
+EnergyRelease、RapidReload、EmptyMag、Trigger、Overcharge、MagazineExpansion、Roulette、EtherConversion、IntegratedImpact、SuppressingFire、CasingRecovery、TacticalReload、FullMagazine
 
-**统计**：表格总计 43 张确认卡（不含草稿区 13 张），已全部实装。
+**统计**：表格总计 43 张确认卡，已全部实装；草稿区 13 张暂不处理。
 
 ## 遗物 / 药水
 
@@ -139,34 +129,33 @@ CasingRecovery、TacticalReload、FullMagazine
 
 ## 美术资源现状
 
-- 【打击】【终结技】卡面、角色战斗立绘（`gunbreaker_char.png`，暂无动画，静态图，287x400）已替换为用户绘制的正式 STS2 风格美术。
-- 【防御】直接复用原版铁甲战士的 Defend 卡面（`res://images/atlases/card_atlas.sprites/ironclad/defend_ironclad.tres`），不单独绘制。
+- 【打击】【终结击】卡面、角色战斗立绘（`gunbreaker_char.png`，静态图 287×400，暂无动画）已替换为用户绘制的正式 STS2 风格美术。
+- 【防御】直接复用原版铁甲战士卡面，不单独绘制。
 - 其余卡牌仍是 FF14 官方技能图标裁剪的占位图，待后续按 STS2 风格逐步替换。
 
 ## 已修复的问题
 
-按时间顺序记录遇到过的bug和根因，避免以后重复踩坑。技术类问题（引擎/框架层面）和数值/平衡类问题都记在这里，不放进"核心机制"章节。
+按时间顺序记录踩过的坑，技术类（引擎/框架）和数值/平衡类问题都记在这里，不放进"核心机制"。
 
 ### 2026-08-04
 
-- **本地化文本完全不生效**：manifest 里 `has_pck` 默认是 `false`，导致本地化表根本没有被加载（日志报 `GetRawText: Key '...' not found in table`）。启用 `BSchneppe.StS2.PckPacker` 并把 `has_pck` 设为 `true` 后修复。
+- **本地化文本完全不生效**：manifest 里 `has_pck` 默认 `false` 导致本地化表未加载。改为 `true` 后修复。
 
 ### 2026-08-05
 
-- **角色选择后又变回铁甲战士**：把 `RequiresEpochAndTimeline` 设成了 `false`，以为这只是"跳过 Ancient 剧情"，实际上它的含义是"完全不接入游戏的纪元/飞升系统"——只有不通过正常角色选择界面的角色才该设为 `false`。日志显示 `SelectCharacter_Patch4` 在这个检查附近抛 `ArgumentOutOfRangeException`，选择被静默中断，画面停留在切换前的角色上。删掉这个覆盖、恢复框架默认值（`true`）后修复。
-- **卡牌数值不会随力量/易伤等加成动态变色**：本地化文本里的数值占位符必须显式写成 `{VarName:diff()}`（注意要带括号）才会触发原版的高亮染色格式化器；裸的 `{VarName}` 只会走普通的 `ToString()`，永远是静态白色。反编译 `LocString.GetFormattedText()` 的官方注释里就直接给出了这个写法作为例子。
-- **打出奖励/商店进入战斗结算会抛异常卡死**：奖励卡的稀有度摇点只在 Common/Uncommon/Rare 之间循环（`CardFactory.CreateForReward` 的 `GetNextAllowedRarity`），Basic 和 Token 永远不会被摇到。当时卡池里这三个稀有度的卡加起来不够 3 张（一次奖励要摇 3 选 1），第三次摇的时候找不到候选，直接抛 `InvalidOperationException`。补充了几张 Common/Uncommon 卡后修复。这条规则以后加卡也要注意：卡池必须**始终**保有至少 3 张 Common 及以上的卡。
-- **进商店直接黑屏卡死（读档也一样）**：商店固定要为每种 `CardType`（Attack/Skill/Power）摇一张卡上架。续剑当时是卡池里唯一的 Power 卡，玩家拿到后它会（按设计）自我排除出奖励/商店池，导致 Power 类型在商店池归零，`CardFactory.CreateForMerchant` 直接抛异常。因为存档就停在商店房间，每次读档都会在同一个地方再崩一次。新增第二张 Power 卡（王室亲卫）后修复——这类"拥有后自我排除"的唯一卡，都要确认它所属的 `CardType` 在卡池里还有其他候选。
-- **消耗晶壤的卡可以在没有晶壤时被免费打出**：`this.SecondaryCosts().Set(...)` 设置的费用数据是挂在一个按卡牌实例引用寻址的附加状态表上的，不会随着卡牌克隆自动复制。当时在 `AfterCreated()` 里设置费用，但这个钩子只在特定的创建路径上才会被调用；战斗里实际使用的卡牌实例是通过克隆产生的，很多时候克隆后费用声明就丢了。改成在 `AfterCloned()`（游戏真正的"每次克隆都会执行"的钩子）里设置后修复，受影响的卡：爆发打击、极光、烈牙、倍攻。
+- **选完角色又变回铁甲战士**：误将 `RequiresEpochAndTimeline` 设为 `false`（实际含义是"完全不接入纪元/飞升系统"，只有不走正常角色选择界面的角色才该设为 `false`）。恢复默认 `true` 后修复。
+- **数值不随力量/易伤等加成变色**：本地化占位符必须写成 `{VarName:diff()}` 才会触发高亮着色，裸 `{VarName}` 只走普通 `ToString()`，永远是静态白色。
+- **领奖励/进商店抛异常卡死**：奖励卡稀有度摇点只在 Common/Uncommon/Rare 循环（`CardFactory.CreateForReward`），三者加起来不足 3 张时摇不出候选直接抛异常。卡池必须始终保有 ≥3 张 Common 及以上的卡。
+- **进商店直接黑屏卡死（读档也一样）**：商店要为 Attack/Skill/Power 各摇一张卡上架；续剑当时是卡池里唯一的 Power 卡，拥有后按设计自我排除，导致 Power 池归零直接抛异常。新增第二张 Power 卡（王室亲卫）后修复——"拥有后自我排除"的唯一卡都要确认其 `CardType` 在池中还有其他候选。
+- **消耗晶壤的卡可以在没有晶壤时被免费打出**：`this.SecondaryCosts().Set(...)` 要放在 `AfterCloned()`（每次克隆都会执行）里设置；`AfterCreated()` 只在特定创建路径触发，战斗里实际使用的克隆实例往往漏掉费用声明。受影响卡：爆发打击、极光、烈牙、倍攻。
 
 ### 2026-08-06
 
-- **自定义晶壤图标节点导致整个战斗界面崩溃（无人物、无血条、无晶壤槽）**：为了修复晶壤图标"开局不显示"的时序问题，把图标行改写成了一个自定义 `PipRow : HBoxContainer` 子类并覆盖 `_Ready()`/`_Process()`。这个节点类导致 MonoMod 的 JIT 钩子在每次进入战斗时直接抛异常，异常一路冒泡打断了整个战斗房间的搭建流程（`NRun.SetCurrentRoom`），不只是晶壤图标，人物立绘和血条都因此消失。根因没有完全查清（疑似自定义节点子类的虚方法覆盖和这套魔改环境下的 MonoMod 热补丁有冲突）。**结论：战斗内自定义UI节点只用普通的内置节点类型拼装（HBoxContainer/TextureRect/Control/Timer等），不要继承 Node 子类去覆盖生命周期方法。**
-- **替换正式角色立绘后人物和血条又消失了**：换上用户绘制的 `gunbreaker_char.png`（原始 1792x2496）后触发了另一个独立的崩溃——`NHealthBarGraftUiPatchHelper.SyncHpBarToHitbox` 在计算血条对齐受击框尺寸时报"数值不是有限数"的引擎级错误。反编译 `RitsuNCreatureVisualsNodeFactory.FromTexture` 确认：一张普通PNG被自动包装成 `NCreatureVisuals` 时，受击框尺寸直接用图片的像素尺寸算出，也直接决定了在战斗中的显示大小——图片太大不仅显示会异常大，还会让这部分尺寸计算出错。分两步缩小到最终 287x400（长边约400px，接近框架里 Bounds 槽位的默认兜底尺寸 240x280 这个量级）后修复，画质在战斗中的实际显示尺寸下没有明显损失。
-- **晶壤图标"开局不显示"，用 `CallDeferred` 没能真正修好**：一开始以为是 RitsuLib 在"刚注册完挂载节点"后会同步隐藏一次、而战斗开始时的首次刷新可能抢跑在这次隐藏之前完成，所以加了一次性的 `CallDeferred(Show)` 作为补救，但实测仍然不稳定。改为在图标行上挂一个内置的 `Godot.Timer` 节点（每0.2秒触发一次），每次都用 `CombatManager.Instance.DebugOnlyGetState()` + `LocalContext.GetMe(...)` 直接重新取得当前玩家、重新计算是否该显示，不再依赖 RitsuLib 内部那次"结算UI是否注册好了"的时序是否踩对点——这样无论一开始那次刷新有没有生效，最多0.2秒内都会被这个定时器自我纠正回正确状态。
-- **终结技连击的溅射伤害打不到所有其他敌人**：场上3个及以上敌人时，崛起之心/支配之心/终结之心的溅射伤害只会命中一个"其他目标"。原因是用了一个手写循环、对每个敌人分别调用 `.Targeting(单个敌人).Execute(...)`——反编译发现 RitsuLib 其实提供了专门给"主目标+溅射到其余所有敌人"这种形状用的 API：`AttackCommandTargetingExtensions.TargetingFiltered`，把整个溅射伤害当成一次性的单个命令、传入一份过滤好的目标列表执行。换用这个 API 后修复。
-- **终结技连击生成的续卡完全看不到**：崛起之心/支配之心/终结之心被放到抽牌堆顶部时，玩家看不到发生了什么。反编译 `CardPileCmd` 里挑选过场动画的逻辑发现：只有"从手牌/出牌区进/出"或者"在抽牌堆/弃牌堆/消耗堆之间互相移动"这两类换堆才会有对应的过场动画；一张全新生成、此前没有任何"旧堆"的卡直接进抽牌堆，两类都不匹配，所以完全没有任何视觉反馈。改成先生成进手牌（复用其他连击链已经在用、效果正常的"飞入手牌"过场），再立刻把这张卡移动到抽牌堆顶部（这一步换堆能正常触发过场动画）——这个"先进手牌、再移到抽牌堆顶部"的组合打法也是参考了原版储君角色的《决断》（DecisionsDecisions）卡的做法。
-- **（上一条修复后仍反馈看不到）真正的根因：溅射目标查询在攻击结算中途抛异常，整个 `OnPlay` 直接中断**：加了"先进手牌再移到抽牌堆"之后，用户反馈续卡依旧完全不显示。回头翻 `godot.log` 才发现真正原因和过场动画无关，是一个被吞掉的异常——`崛起之心/支配之心/终结之心` 的溅射目标用的是 `CombatState.GetOpponentsOf(...).Where(...)` 这个惰性 LINQ 查询，直接传给 `TargetingFiltered`。如果溅射伤害在结算过程中打死了其中一个溅射目标，`GetOpponentsOf` 返回的是敌人列表的活引用，死亡会实时把该敌人从这个列表里移除，而惰性查询这时候还在枚举同一个列表，于是抛出 `InvalidOperationException: Collection was modified`——这个异常会直接中断整个 `OnPlay` 协程，后面生成续卡的代码根本没机会执行。真正的修复是在传给 `TargetingFiltered` 之前加 `.ToList()` 把目标列表立即固化成一份快照，不再和会变化的活列表绑在一起。之前"先进手牌"的过场动画修复方向没有错（对话手牌路径确实需要那样做），只是没有触及真正的崩溃根因。
+- **自定义晶壤图标节点导致整个战斗界面崩溃（无人物/无血条/无晶壤槽）**：把图标行写成自定义 `PipRow : HBoxContainer` 子类并覆盖 `_Ready()`/`_Process()`，导致 MonoMod 热补丁在每次进战斗时抛异常，打断整个战斗房间搭建流程。**结论：战斗内自定义 UI 只用内置节点类型拼装（HBoxContainer/TextureRect/Timer 等），不要继承 Node 覆盖生命周期方法。**
+- **换上正式角色立绘后人物和血条又消失**：受击框尺寸直接按贴图像素尺寸计算，也决定战斗中的显示大小；原图 1792×2496 太大导致这部分数值计算出错（`NHealthBarGraftUiPatchHelper.SyncHpBarToHitbox` 报"数值不是有限数"）。缩小到 287×400 后修复，实际显示画质无明显损失。
+- **晶壤图标"开局不显示"，`CallDeferred` 没能真正修好**：一次性补救对时序很敏感、不稳定。改为挂一个内置 `Godot.Timer`（0.2秒一次），每次都用 `CombatManager` 当前状态重新计算是否该显示，不再依赖某一次刷新是否踩对时序，最多0.2秒内自我纠正。
+- **终结连击的溅射伤害打不到所有其他敌人**：场上3个及以上敌人时手写循环对每个敌人分别 `.Targeting(单个).Execute()`，只命中一个目标。改用 RitsuLib 提供的 `AttackCommandTargetingExtensions.TargetingFiltered`，把溅射伤害当成一次性命令传入过滤好的目标列表后修复。
+- **终结连击生成的续卡完全看不到**：表面原因是新生成的卡直接进抽牌堆没有过场动画（`CardPileCmd` 只对"经过手牌/出牌区"或"在抽牌堆/弃牌堆/消耗堆之间互相移动"这两类换堆播放动画），改成先生成进手牌、再移到抽牌堆顶部后，问题依然存在。回头查 `godot.log` 才发现真正根因：溅射目标用的是 `CombatState.GetOpponentsOf(...).Where(...)` 惰性查询，绑定的是敌人列表的活引用；溅射打死目标时列表被实时修改，惰性查询枚举到一半抛出 `InvalidOperationException: Collection was modified`，直接中断整个 `OnPlay`，后面生成续卡的代码根本没执行到。加 `.ToList()` 把目标列表固化成快照后修复。
 
 ## 待跟进事项
 
