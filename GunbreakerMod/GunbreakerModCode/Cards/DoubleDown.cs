@@ -22,6 +22,10 @@ public sealed class DoubleDown() : ModCardTemplate(0, CardType.Attack, CardRarit
         PortraitPath = "res://GunbreakerMod/images/card_portraits/double_down.png",
     };
 
+    // Added per balance feedback: a 2-Cartridge, 0-cost, 40+ damage AoE nuke being reusable every
+    // time Cartridge came back around was too strong for a Rare.
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
+
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(40m, ValueProp.Move)];
 
     protected override bool ShouldGlowGoldInternal => CartridgeResource.HasAtLeast(Owner, 2);

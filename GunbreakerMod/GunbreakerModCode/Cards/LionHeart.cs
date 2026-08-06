@@ -1,8 +1,10 @@
+using System.Linq;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
+using STS2RitsuLib.Combat.CardTargeting;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -30,17 +32,12 @@ public sealed class LionHeart() : ModCardTemplate(2, CardType.Attack, CardRarity
             .Targeting(cardPlay.Target)
             .Execute(choiceContext);
 
-        foreach (var enemy in CombatState.GetOpponentsOf(Owner.Creature))
-        {
-            if (enemy == cardPlay.Target)
-            {
-                continue;
-            }
-            await DamageCmd.Attack(DynamicVars["DamageSplash"].BaseValue)
-                .FromCard(this, cardPlay)
-                .Targeting(enemy)
-                .Execute(choiceContext);
-        }
+        // See ReignOfBeasts.cs for why this uses TargetingFiltered instead of a manual loop.
+        var splashTargets = CombatState.GetOpponentsOf(Owner.Creature).Where(enemy => enemy != cardPlay.Target);
+        await DamageCmd.Attack(DynamicVars["DamageSplash"].BaseValue)
+            .FromCard(this, cardPlay)
+            .TargetingFiltered(splashTargets)
+            .Execute(choiceContext);
     }
 
     protected override void OnUpgrade()

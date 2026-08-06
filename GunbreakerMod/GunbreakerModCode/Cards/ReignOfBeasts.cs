@@ -1,8 +1,10 @@
+using System.Linq;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
+using STS2RitsuLib.Combat.CardTargeting;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -31,24 +33,32 @@ public sealed class ReignOfBeasts() : ModCardTemplate(2, CardType.Attack, CardRa
             .Targeting(cardPlay.Target)
             .Execute(choiceContext);
 
-        foreach (var enemy in CombatState.GetOpponentsOf(Owner.Creature))
-        {
-            if (enemy == cardPlay.Target)
-            {
-                continue;
-            }
-            await DamageCmd.Attack(DynamicVars["DamageSplash"].BaseValue)
-                .FromCard(this, cardPlay)
-                .Targeting(enemy)
-                .Execute(choiceContext);
-        }
+        // A manual per-enemy loop with repeated .Targeting(single).Execute() calls only ever hit
+        // one splash target regardless of how many enemies were on the field (confirmed by the
+        // user). TargetingFiltered runs the whole splash hit as a single AttackCommand against an
+        // explicit target list instead, which is the pattern RitsuLib provides for exactly this
+        // "primary target + everyone else" shape.
+        var splashTargets = CombatState.GetOpponentsOf(Owner.Creature).Where(enemy => enemy != cardPlay.Target);
+        await DamageCmd.Attack(DynamicVars["DamageSplash"].BaseValue)
+            .FromCard(this, cardPlay)
+            .TargetingFiltered(splashTargets)
+            .Execute(choiceContext);
 
         var nobleBlood = CombatState.CreateCard<NobleBlood>(Owner);
         if (IsUpgraded)
         {
             CardCmd.Upgrade(nobleBlood);
         }
-        await CardPileCmd.AddGeneratedCardToCombat(nobleBlood, PileType.Draw, Owner, CardPilePosition.Top);
+        // Generate into Hand first (shows the normal "fly into hand" reveal, same as the other
+        // combo chains) then move it to the top of the draw pile - a card materializing directly
+        // into Draw with no prior pile gets no visual treatment at all (confirmed by decompiling
+        // CardPileCmd's tween-selection logic: it only animates pile changes that either start or
+        // end in Hand/Play, or move between two already-invisible piles like Draw/Discard/Exhaust -
+        // a brand new card with no old pile matches neither case). Per user request: show the
+        // generated card before it lands on the deck, mirroring how Regent's DecisionsDecisions
+        // moves cards from hand to the top of the draw pile.
+        await CardPileCmd.AddGeneratedCardToCombat(nobleBlood, PileType.Hand, Owner);
+        await CardPileCmd.Add(nobleBlood, PileType.Draw, CardPilePosition.Top);
     }
 
     protected override void OnUpgrade()

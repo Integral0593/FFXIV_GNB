@@ -10,8 +10,8 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace GunbreakerMod.GunbreakerModCode.Cards;
 
 // 终结技 Finisher - opens the Reign of Beasts / Noble Blood / Lion Heart chain. Gains Cartridge and
-// puts Reign of Beasts on TOP of the draw pile (not into hand) - confirmed with the user this chain
-// is strictly sequential (play one, the next lands on top of the draw pile), not a 3-choice branch.
+// puts Reign of Beasts on top of the draw pile - confirmed with the user this chain is strictly
+// sequential (play one, the next lands on top of the draw pile), not a 3-choice branch.
 [RegisterCard(typeof(GunbreakerCardPool))]
 public sealed class Finisher() : ModCardTemplate(2, CardType.Skill, CardRarity.Rare, TargetType.Self)
 {
@@ -33,7 +33,11 @@ public sealed class Finisher() : ModCardTemplate(2, CardType.Skill, CardRarity.R
         {
             CardCmd.Upgrade(reignOfBeasts);
         }
-        await CardPileCmd.AddGeneratedCardToCombat(reignOfBeasts, PileType.Draw, Owner, CardPilePosition.Top);
+        // Generate into Hand first so the player actually sees the card (see ReignOfBeasts.cs for
+        // why a card materializing directly into Draw gets no visual treatment at all), then move
+        // it to the top of the draw pile.
+        await CardPileCmd.AddGeneratedCardToCombat(reignOfBeasts, PileType.Hand, Owner);
+        await CardPileCmd.Add(reignOfBeasts, PileType.Draw, CardPilePosition.Top);
     }
 
     protected override void OnUpgrade()

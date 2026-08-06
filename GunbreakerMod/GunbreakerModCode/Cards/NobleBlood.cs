@@ -1,8 +1,10 @@
+using System.Linq;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
+using STS2RitsuLib.Combat.CardTargeting;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -30,24 +32,21 @@ public sealed class NobleBlood() : ModCardTemplate(2, CardType.Attack, CardRarit
             .Targeting(cardPlay.Target)
             .Execute(choiceContext);
 
-        foreach (var enemy in CombatState.GetOpponentsOf(Owner.Creature))
-        {
-            if (enemy == cardPlay.Target)
-            {
-                continue;
-            }
-            await DamageCmd.Attack(DynamicVars["DamageSplash"].BaseValue)
-                .FromCard(this, cardPlay)
-                .Targeting(enemy)
-                .Execute(choiceContext);
-        }
+        // See ReignOfBeasts.cs for why this uses TargetingFiltered instead of a manual loop.
+        var splashTargets = CombatState.GetOpponentsOf(Owner.Creature).Where(enemy => enemy != cardPlay.Target);
+        await DamageCmd.Attack(DynamicVars["DamageSplash"].BaseValue)
+            .FromCard(this, cardPlay)
+            .TargetingFiltered(splashTargets)
+            .Execute(choiceContext);
 
         var lionHeart = CombatState.CreateCard<LionHeart>(Owner);
         if (IsUpgraded)
         {
             CardCmd.Upgrade(lionHeart);
         }
-        await CardPileCmd.AddGeneratedCardToCombat(lionHeart, PileType.Draw, Owner, CardPilePosition.Top);
+        // See ReignOfBeasts.cs for why this goes through Hand before moving to the draw-pile top.
+        await CardPileCmd.AddGeneratedCardToCombat(lionHeart, PileType.Hand, Owner);
+        await CardPileCmd.Add(lionHeart, PileType.Draw, CardPilePosition.Top);
     }
 
     protected override void OnUpgrade()
