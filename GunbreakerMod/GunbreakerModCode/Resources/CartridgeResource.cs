@@ -41,7 +41,7 @@ public static class CartridgeResource
     private const float SelfRefreshIntervalSeconds = 0.2f;
 
     private static readonly Color LitColor = new(0.25f, 0.85f, 1f);
-    private static readonly Color UnlitColor = new(0.55f, 0.55f, 0.6f);
+    private static readonly Color UnlitColor = new(0.3f, 0.3f, 0.33f);
 
     private static SecondaryResourceDefinition? _definition;
 
@@ -186,7 +186,14 @@ public static class CartridgeResource
         var orb = energyContainer.GetChildOrNull<Control>(0) ?? energyContainer;
         const float rowWidth = Slots * PipSize + (Slots - 1) * PipGap;
         var targetX = orb.GlobalPosition.X + (orb.Size.X / 2f) - (rowWidth / 2f);
-        var targetY = orb.GlobalPosition.Y - (PipSize + GapAboveEnergyOrb);
+        // NEnergyCounter.AnimIn() tweens the counter ROOT's Position back to Vector2.Zero every
+        // combat (confirmed via decompile), so scenes/energy_counter.tscn can't shift the visible
+        // art by moving the root - it pushes the art down via an offset baked into each CHILD
+        // node instead (currently 30px - keep this in sync with that .tscn's per-child
+        // offset_top). orb.GlobalPosition still reports the unshifted root, so the pip row needs
+        // that same offset added back in to stay glued above the actually-visible artwork.
+        const float energyCounterContentOffsetY = 30f;
+        var targetY = orb.GlobalPosition.Y + energyCounterContentOffsetY - (PipSize + GapAboveEnergyOrb);
         row.GlobalPosition = new Vector2(targetX, targetY);
     }
 }

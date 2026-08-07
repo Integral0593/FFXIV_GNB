@@ -6,6 +6,11 @@
 **/android/
 **/packages/
 
+# Godot editor export output (real .pck/.zip exports, not source)
+GunbreakerMod/GunbreakerMod.pck
+GunbreakerMod/GunbreakerMod.zip
+GunbreakerMod/export/
+
 # Per-developer local paths (Steam/Godot install locations)
 **/Directory.Build.props
 **/*.user

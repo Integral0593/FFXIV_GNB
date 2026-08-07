@@ -15,19 +15,21 @@ namespace GunbreakerMod.GunbreakerModCode.Characters;
 // auto-wraps a Texture2D into a valid NCreatureVisuals via RitsuGodotNodeFactories -
 // same for the Ui paths above, which all accept a PackedScene OR a Texture2D).
 //
-// EnergyCounterPath / Spine / trail vfx / sfx are still deliberately left unset (falling back
-// to Ironclad via PlaceholderCharacterId). EnergyCounterPath genuinely needs a real .tscn
-// (RitsuNEnergyCounterNodeFactory.CreateBareFromResourceImpl explicitly throws
-// NotSupportedException for a plain texture, confirmed via decompile - unlike VisualsPath/
-// Merchant/RestSite, no texture-only path exists here). A hand-written .tscn was tried and even
-// compiled fine, but this project's build pipeline packs mod assets with a lightweight custom
-// packer (BSchneppe.StS2.PckPacker) rather than a real Godot editor export, and that packer
-// flatly refuses any .tscn: `dotnet build` prints "PCK packing skipped - unsupported files
-// detected: energy_counter.tscn" and, worse, skips packing EVERYTHING else in the same build
-// when it hits one. Reverted rather than leave that in the tree. Doing this for real would need
-// the actual Godot editor to export the mod instead of this project's normal dotnet-build flow -
-// a bigger workflow change than just adding art, so flagging it rather than deciding
-// unilaterally.
+// Spine / trail vfx / sfx are still deliberately left unset (falling back to Ironclad via
+// PlaceholderCharacterId) since there's no real art or audio for them yet.
+//
+// EnergyCounterPath points at a real hand-written .tscn (scenes/energy_counter.tscn), built to
+// the exact slot contract RitsuNEnergyCounterNodeFactory expects (unique-named
+// %Layers/%RotationLayers/%EnergyVfxBack/%EnergyVfxFront/%StarAnchor plus a plain Label - the
+// factory auto-converts plain Control/Label nodes into the real NParticlesContainer/MegaLabel
+// types, confirmed via decompile), with energy.png as a full-rect TextureRect inside %Layers.
+// A plain texture path doesn't work here (RitsuNEnergyCounterNodeFactory.CreateBareFromResourceImpl
+// explicitly throws NotSupportedException for one) - unlike VisualsPath/Merchant/RestSite, this
+// genuinely needs a scene. IMPORTANT: this project's normal `dotnet build` flow packs mod assets
+// with a lightweight custom packer (BSchneppe.StS2.PckPacker) that flatly refuses to bundle any
+// .tscn - it needs a real Godot editor export (Project > Export > BasicExport preset, already
+// configured in export_presets.cfg) to actually ship. Don't remove this scene file without
+// checking whether the last shipped build came from an editor export or a plain dotnet build.
 //
 // Merchant/rest-site DON'T need a real .tscn though - RitsuLib's WorldProceduralVisuals lets a
 // mod supply plain static textures per named "cue" instead of an animated scene
@@ -76,6 +78,7 @@ public sealed class Gunbreaker : ModCharacterTemplate<GunbreakerCardPool, Gunbre
         {
             // Real character art (no animation rig yet, per user - static image is fine for now).
             VisualsPath = "res://GunbreakerMod/images/gunbreaker_char.png",
+            EnergyCounterPath = "res://GunbreakerMod/scenes/energy_counter.tscn",
         },
         // Merchant art was rendering small and too low with no style override at all (user
         // screenshot), so it's not just a matter of resizing the source texture - the node this
