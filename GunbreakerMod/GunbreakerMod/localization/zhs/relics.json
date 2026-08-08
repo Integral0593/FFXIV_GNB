@@ -1,5 +1,5 @@
 {
-  "GUNBREAKER_MOD_RELIC_GUNBREAKER_STARTER_RELIC.title": "占位遗物",
-  "GUNBREAKER_MOD_RELIC_GUNBREAKER_STARTER_RELIC.description": "暂无效果，占位起始遗物。",
-  "GUNBREAKER_MOD_RELIC_GUNBREAKER_STARTER_RELIC.flavor": "一个占位符，等待真正的设计。"
+  "GUNBREAKER_MOD_RELIC_GUNBREAKER_STARTER_RELIC.title": "绝枪战士之证",
+  "GUNBREAKER_MOD_RELIC_GUNBREAKER_STARTER_RELIC.description": "在每场战斗开始时，获得{Cartridge:secondaryResourceIcons()}。",
+  "GUNBREAKER_MOD_RELIC_GUNBREAKER_STARTER_RELIC.flavor": "琥珀状的灵魂水晶，刻有历代绝枪战士的记忆和觉悟。"
 }
